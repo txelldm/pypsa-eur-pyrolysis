@@ -1,0 +1,29 @@
+# Python / system junk
+__pycache__/
+*.pyc
+*~
+*.orig
+
+# Snakemake runtime dirs
+.snakemake/
+logs/
+benchmarks/
+
+# Output directories
+results/
+resources/
+
+# Large data (NEVER commit!)
+data/
+cutouts/
+tmp/
+
+# Jupyter junk
+.ipynb_checkpoints/
+
+# Developer junk
+.vscode/
+.idea/
+
+# Documentation build output
+doc/_build/
