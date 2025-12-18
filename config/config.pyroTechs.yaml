@@ -17,7 +17,7 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: "Pyro_nuts"
+  name: "NOpyrolysis_oil"
   scenarios:
     enable: false
     file: config/scenarios.yaml
@@ -45,21 +45,11 @@ scenario:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
 countries:
 - DE
-- AT
-- BE
-- CH
-- CZ
-- DK
-- FR
-- LU
-- MK
-- PL
-
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#snapshots
 snapshots:
   start: "2013-01-01"
-  end: "2014-01-01"
+  end: "2014-01-01" 
   inclusive: 'left'
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#enable
@@ -402,7 +392,7 @@ energy:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#biomass
 biomass:
   year: 2050
-  scenario: ENS_High
+  scenario: ENS_Med
   classes:
     solid biomass:
     - Agricultural waste
@@ -664,7 +654,7 @@ sector:
     annualise_cost: true
     tax_weighting: false
     construction_index: true
-  tes: false
+  tes: true
   boilers: true
   resistive_heaters: true
   oil_boilers: false
@@ -715,7 +705,7 @@ sector:
     2040: 180
     2045: 250
     2050: 200
-  co2_sequestration_cost: 10
+  co2_sequestration_cost: 00
   co2_sequestration_lifetime: 50
   co2_spatial: false
   co2_network: false
@@ -769,15 +759,15 @@ sector:
       compression_per_1000km: 0.01
     electricity distribution grid:
       efficiency_static: 0.97
-  H2_network: true
+  H2_network: false
   gas_network: false
   H2_retrofit: false
   H2_retrofit_capacity_per_CH4: 0.6
   gas_network_connectivity_upgrade: 1
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
-  biomass_spatial: true
-  biomass_transport: true
+  biomass_spatial: false
+  biomass_transport: false
   biogas_upgrading: true
   biogas_upgrading_cc: false
   conventional_generation:
@@ -827,8 +817,10 @@ sector:
       gas: 122
       oil: 125
   pyrolysis:
-    enable: true #true #false
+    enable: false #true #false
   pyrolysis_oil: false
+  flash_pyrolysis: false
+
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#industry
 industry:
@@ -944,10 +936,9 @@ costs:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
 clustering:
-  mode: administrative #'busmap’, ‘custom_busmap’, ‘administrative’, ‘custom_busshapes
+  mode: busmap
   administrative:
-    level: 0
-    DE: 3 
+    level: 1
   focus_weights: false
   copperplate_regions: []
   build_bidding_zones:
@@ -971,7 +962,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: 6H
+    resolution_sector: 1H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:
@@ -1177,7 +1168,7 @@ solving:
 
   solver:
     name: gurobi
-    options: gurobi-exploration
+    options: gurobi-default
 
   solver_options:
     highs-default:
@@ -1227,14 +1218,6 @@ solving:
       OptimalityTol: 1.e-5
       Seed: 123
       threads: 8
-    gurobi-exploration:        #my config for fast scenarios #new 
-      threads: 8
-      method: 2         # barrier
-      crossover: 0     # no crossover (faster, fine for LP)
-      BarConvTol: 1.e-3       #less accuracy but faster
-      Seed: 123
-      FeasibilityTol: 1.e-6         # How close must the constraint LHS = RHS be (1e-6 → accurate enough for planning)
-      OptimalityTol: 1.e-4           # stops good enough for planning. How close to the optimal solution we require
     cplex-default:
       threads: 4
       lpmethod: 4 # barrier

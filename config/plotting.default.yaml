@@ -278,6 +278,9 @@ plotting:
     syngas wo h2 direct combustion for heat: "#76EEC6"
     syngas wo h2 store: "#008B8B"
     syngas2 direct combustion for heat: "#48D1CC"
+    #extra:
+    biomass to liquid CC: "#8c564b"
+    pyrolysis_oil: "#48D1CC"
     # wind
     onwind: "#235ebc"
     onshore wind: "#235ebc"

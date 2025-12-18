@@ -4487,6 +4487,7 @@ def add_biomass(
             marginal_cost=0.0,
             lifetime=25,  # TODO: add value to technology-data
         )
+    
     def ensure_biochar_store(n: pypsa.Network):
         """ 
         Ensure that a global biochar carrier, bus and store exist.
@@ -4539,6 +4540,7 @@ def add_biomass(
             marginal_cost=pyrolysis_data.loc["flash-pyrolysis", "marginal cost"],
             lifetime=25
         )
+
 
 #pyro
 
