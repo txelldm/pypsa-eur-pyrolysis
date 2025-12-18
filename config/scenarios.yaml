@@ -76,7 +76,7 @@ test_med_biomass_pyro:
   biomass:
     scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
 
-test_med_biomass_pyro:
+test_low_biomass_pyro:
   biomass:
     scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
   
@@ -88,7 +88,7 @@ test_med_biomass_No-pyro:
     slow_pyrolysis_CHP: false
     slow_pyrolysis_H2: false
 
-test_med_biomass_No-pyro:
+test_low_biomass_No-pyro:
   biomass:
     scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
   sector:
