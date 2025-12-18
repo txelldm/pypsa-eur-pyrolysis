@@ -4534,9 +4534,52 @@ def add_biomass(
             carrier="flash-pyrolysis",
             efficiency=pyrolysis_data.loc["flash-pyrolysis", "efficiency-oil"],  #upgraded biofuel
             efficiency2=pyrolysis_data.loc["flash-pyrolysis", "efficiency-biochar"], #biochar
-            efficiency3=-pyrolysis_data.loc["flash-pyrolysis", "efficiency-co2"], #negative emissions
+            efficiency3= -pyrolysis_data.loc["flash-pyrolysis", "efficiency-co2"], #negative emissions
             capital_cost=pyrolysis_data.loc["flash-pyrolysis", "capital cost"], 
             marginal_cost=pyrolysis_data.loc["flash-pyrolysis", "marginal cost"],
+            p_nom_extendable=True,
+            lifetime=25
+        )
+    if options["slow_pyrolysis_CHP"]:
+        print("adding slow-pyrolysis-CHP...")
+        ensure_biochar_store(n)
+
+        n.add(
+            "Link",
+            spatial.nodes + " slow-pyrolysis-CHP",
+            bus0=spatial.biomass.nodes,
+            bus1=nodes,   # to elec load
+            bus2= urban_central + " urban central heat", #to district heating
+            bus3="biochar",
+            bus4="co2 atmosphere",
+            carrier="slow-pyrolysis-CHP",
+            efficiency=pyrolysis_data.loc["slow-pyrolysis-CHP", "efficiency-elec"],  #elec
+            efficiency2=pyrolysis_data.loc["slow-pyrolysis-CHP", "efficiency-heat"],  #heat
+            efficiency3=pyrolysis_data.loc["slow-pyrolysis-CHP", "efficiency-biochar"], #biochar
+            efficiency4= -pyrolysis_data.loc["slow-pyrolysis-CHP", "efficiency-co2"], #negative emissions
+            capital_cost=pyrolysis_data.loc["slow-pyrolysis-CHP", "capital cost"], 
+            marginal_cost=pyrolysis_data.loc["slow-pyrolysis-CHP", "marginal cost"],
+            p_nom_extendable=True,
+            lifetime=25
+        )
+    if options["slow_pyrolysis_H2"]:
+        print("adding slow-pyrolysis-H2...")
+        ensure_biochar_store(n)
+
+        n.add(
+            "Link",
+            spatial.nodes + " slow-pyrolysis-H2",
+            bus0=spatial.biomass.nodes,
+            bus1=spatial.h2.nodes,   # to H2 load
+            bus2="biochar",
+            bus3="co2 atmosphere",
+            carrier="slow-pyrolysis-H2",
+            efficiency=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-H2"],  #H2
+            efficiency2=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-biochar"], #biochar
+            efficiency3= -pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-co2"], #negative emissions
+            capital_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "capital cost"], 
+            marginal_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "marginal cost"],
+            p_nom_extendable=True,
             lifetime=25
         )
 
@@ -4563,7 +4606,7 @@ def add_pyrolysis(
         Object containing spatial information about different carriers (gas, biomass, etc.)
     """
 
-    if options["pyrolysis"]["enable"]:
+    if options["pyrolysis_multi-output"]["enable"]:
         print("adding pyrolysis...")
         biomass_enabled = (
             options.get("biomass", False)
@@ -6784,8 +6827,8 @@ if __name__ == "__main__":
 
         #change
         #only for debugging!!! go to already have files for debugging
-        debug_base = "/home/mdomenec/pypsa-eur-tx2/debugging"
-        orig_root = "/home/mdomenec/pypsa-eur-tx2/resources"
+        # debug_base = "/home/mdomenec/pypsa-eur-tx2/debugging"
+        # orig_root = "/home/mdomenec/pypsa-eur-tx2/resources"
 
         for name, val in snakemake.input.items():
             # some entries may be unnamed (name is None); skip those

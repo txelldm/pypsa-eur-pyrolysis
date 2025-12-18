@@ -45,13 +45,63 @@
 #     scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
 
 
+test_all_pyro:
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+test_no_pyro:
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
 
-d
-Pyro_NUTS:
+test_flash-pyro:
   sector:
-    pyrolysis:
-      enable: true 
-NoPyro_NUTS:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+test_CHP_pyro:
   sector:
-    pyrolysis:
-      enable: false 
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: false
+test_H2_pyro:
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: true
+
+test_med_biomass_pyro:
+  biomass:
+    scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
+
+test_med_biomass_pyro:
+  biomass:
+    scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
+  
+test_med_biomass_No-pyro:
+  biomass:
+    scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+
+test_med_biomass_No-pyro:
+  biomass:
+    scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+
+
+# Pyro_NUTS:
+#   sector:
+#     pyrolysis:
+#       enable: true 
+# NoPyro_NUTS:
+#   sector:
+#     pyrolysis:
+#       enable: false 

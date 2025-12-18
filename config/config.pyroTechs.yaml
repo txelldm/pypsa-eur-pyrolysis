@@ -17,9 +17,9 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: "NOpyrolysis_oil"
+  name: all #"small_test_spatial"
   scenarios:
-    enable: false
+    enable: true
     file: config/scenarios.yaml
   disable_progressbar: false
   shared_resources:
@@ -392,7 +392,7 @@ energy:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#biomass
 biomass:
   year: 2050
-  scenario: ENS_Med
+  scenario: ENS_High   #ENS_Med
   classes:
     solid biomass:
     - Agricultural waste
@@ -766,8 +766,8 @@ sector:
   gas_network_connectivity_upgrade: 1
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
-  biomass_spatial: false
-  biomass_transport: false
+  biomass_spatial: true
+  biomass_transport: true
   biogas_upgrading: true
   biogas_upgrading_cc: false
   conventional_generation:
@@ -816,10 +816,11 @@ sector:
       methanol: 121
       gas: 122
       oil: 125
-  pyrolysis:
+  pyrolysis_multi-output:
     enable: false #true #false
-  pyrolysis_oil: false
-  flash_pyrolysis: false
+  flash_pyrolysis: true
+  slow_pyrolysis_CHP: true
+  slow_pyrolysis_H2: true
 
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#industry
@@ -936,7 +937,7 @@ costs:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
 clustering:
-  mode: busmap
+  mode: administrative #busmap
   administrative:
     level: 1
   focus_weights: false
