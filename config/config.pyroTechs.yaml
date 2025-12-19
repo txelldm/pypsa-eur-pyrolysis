@@ -767,7 +767,7 @@ sector:
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
   biomass_spatial: true
-  biomass_transport: true
+  biomass_transport: false
   biogas_upgrading: true
   biogas_upgrading_cc: false
   conventional_generation:
@@ -963,7 +963,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: 1H
+    resolution_sector: 6H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:
@@ -1169,9 +1169,17 @@ solving:
 
   solver:
     name: gurobi
-    options: gurobi-default
+    options: gurobi-exploration
 
   solver_options:
+    gurobi-exploration:        #my config for fast scenarios #new 
+      threads: 8
+      method: 2         # barrier
+      crossover: 0     # no crossover (faster, fine for LP)
+      BarConvTol: 1.e-3       #less accuracy but faster
+      Seed: 123
+      FeasibilityTol: 1.e-6         # How close must the constraint LHS = RHS be (1e-6 → accurate enough for planning)
+      OptimalityTol: 1.e-4           # stops good enough for planning. How close to the optimal solution we require
     highs-default:
       # refer to https://ergo-code.github.io/HiGHS/dev/options/definitions/
       threads: 1

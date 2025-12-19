@@ -14,94 +14,308 @@
 #   electricity:
 #       renewable_carriers: [wind, solar] # override the list of renewable carriers
 
-#find pyro behaviour
-# GRAZ_pyro_MedBm__0seq:
+1_PyroYes_Low_200:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 200
+
+2_PyroYes_Low_100:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 100
+
+3_PyroYes_Low_50:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 50
+
+4_PyroYes_Low_0:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 0
+
+
+5_PyroYes_Med_200:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 200
+
+6_PyroYes_Med_100:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 100
+
+7_PyroYes_Med_50:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 50
+
+8_PyroYes_Med_0:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 0
+
+
+9_PyroYes_High_200:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 200
+
+10_PyroYes_High_100:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 100
+
+11_PyroYes_High_50:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 50
+
+12_PyroYes_High_0:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 0
+
+
+13_PyroNo_Low_200:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 200
+
+14_PyroNo_Low_100:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 100
+
+15_PyroNo_Low_50:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 50
+
+16_PyroNo_Low_0:
+  biomass:
+    scenario: ENS_Low
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 0
+
+
+17_PyroNo_Med_200:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 200
+
+18_PyroNo_Med_100:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 100
+
+19_PyroNo_Med_50:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 50
+
+20_PyroNo_Med_0:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 0
+
+
+21_PyroNo_High_200:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 200
+
+22_PyroNo_High_100:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 100
+
+23_PyroNo_High_50:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 50
+
+24_PyroNo_High_0:
+  biomass:
+    scenario: ENS_High
+  sector:
+    flash_pyrolysis: false
+    slow_pyrolysis_CHP: false
+    slow_pyrolysis_H2: false
+    co2_sequestration_potential:
+      2050: 0
+
+
+
+
+
+#########
+# test_all_pyro:
 #   sector:
-#     pyrolysis:
-#       enable: true 
-#     co2_sequestration_potential:
-#       2020: 0
-#       2025: 0
-#       2030: 50
-#       2035: 100
-#       2040: 200
-#       2045: 200
-#       2050: 0
+#     flash_pyrolysis: true
+#     slow_pyrolysis_CHP: true
+#     slow_pyrolysis_H2: true
+# test_no_pyro:
+#   sector:
+#     flash_pyrolysis: false
+#     slow_pyrolysis_CHP: false
+#     slow_pyrolysis_H2: false
+
+# test_flash-pyro:
+#   sector:
+#     flash_pyrolysis: true
+#     slow_pyrolysis_CHP: false
+#     slow_pyrolysis_H2: false
+# test_CHP_pyro:
+#   sector:
+#     flash_pyrolysis: false
+#     slow_pyrolysis_CHP: true
+#     slow_pyrolysis_H2: false
+# test_H2_pyro:
+#   sector:
+#     flash_pyrolysis: false
+#     slow_pyrolysis_CHP: false
+#     slow_pyrolysis_H2: true
+
+# test_med_biomass_pyro:
 #   biomass:
 #     scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
-# GRAZ_pyro_LowBm__0seq:
-#   sector:
-#     pyrolysis:
-#       enable: true 
-#     co2_sequestration_potential:
-#       2020: 0
-#       2025: 0
-#       2030: 50
-#       2035: 100
-#       2040: 200
-#       2045: 200
-#       2050: 0
+#   sect
+
+# test_low_biomass_pyro:
 #   biomass:
 #     scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
-
-
-test_all_pyro:
-  sector:
-    flash_pyrolysis: true
-    slow_pyrolysis_CHP: true
-    slow_pyrolysis_H2: true
-test_no_pyro:
-  sector:
-    flash_pyrolysis: false
-    slow_pyrolysis_CHP: false
-    slow_pyrolysis_H2: false
-
-test_flash-pyro:
-  sector:
-    flash_pyrolysis: true
-    slow_pyrolysis_CHP: false
-    slow_pyrolysis_H2: false
-test_CHP_pyro:
-  sector:
-    flash_pyrolysis: false
-    slow_pyrolysis_CHP: true
-    slow_pyrolysis_H2: false
-test_H2_pyro:
-  sector:
-    flash_pyrolysis: false
-    slow_pyrolysis_CHP: false
-    slow_pyrolysis_H2: true
-
-test_med_biomass_pyro:
-  biomass:
-    scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
-
-test_low_biomass_pyro:
-  biomass:
-    scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
   
-test_med_biomass_No-pyro:
-  biomass:
-    scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
-  sector:
-    flash_pyrolysis: false
-    slow_pyrolysis_CHP: false
-    slow_pyrolysis_H2: false
-
-test_low_biomass_No-pyro:
-  biomass:
-    scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
-  sector:
-    flash_pyrolysis: false
-    slow_pyrolysis_CHP: false
-    slow_pyrolysis_H2: false
-
-
-# Pyro_NUTS:
+# test_med_biomass_No-pyro:
+#   biomass:
+#     scenario: ENS_Med  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
 #   sector:
-#     pyrolysis:
-#       enable: true 
-# NoPyro_NUTS:
+#     flash_pyrolysis: false
+#     slow_pyrolysis_CHP: false
+#     slow_pyrolysis_H2: false
+#     co2_sequestration_potential:
+#       2050: 200
+
+# test_low_biomass_No-pyro:
+#   biomass:
+#     scenario: ENS_Low  #	{“ENS_Low”, “ENS_Med”, “ENS_High”}
 #   sector:
-#     pyrolysis:
-#       enable: false 
+#     flash_pyrolysis: false
+#     slow_pyrolysis_CHP: false
+#     slow_pyrolysis_H2: false
+
+
