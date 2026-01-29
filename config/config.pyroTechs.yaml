@@ -17,7 +17,7 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: all #"small_test_spatial"
+  name: all #"small_test_data"  #all
   scenarios:
     enable: true
     file: config/scenarios.yaml
@@ -766,9 +766,9 @@ sector:
   gas_network_connectivity_upgrade: 1
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
-  biomass_spatial: true
+  biomass_spatial: false #change to true
   biomass_transport: false
-  biogas_upgrading: true
+  biogas_upgrading: false
   biogas_upgrading_cc: false
   conventional_generation:
     OCGT: gas
@@ -937,7 +937,7 @@ costs:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
 clustering:
-  mode: administrative #busmap
+  mode: busmap #administrative #busmap
   administrative:
     level: 1
   focus_weights: false
@@ -963,7 +963,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: 6H
+    resolution_sector: 2H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:
