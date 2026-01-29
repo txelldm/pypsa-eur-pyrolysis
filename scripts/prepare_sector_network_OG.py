@@ -4573,14 +4573,10 @@ def add_biomass(
             bus1=spatial.h2.nodes,   # to H2 load
             bus2="biochar",
             bus3="co2 atmosphere",
-            bus4=nodes, #to elec load
-            bus5=urban_central + " urban central heat", #to district heating
             carrier="slow-pyrolysis-H2",
             efficiency=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-H2"],  #H2
             efficiency2=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-biochar"], #biochar
             efficiency3= -pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-co2"], #negative emissions
-            efficiency4=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-elec"],
-            efficiency5=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-heat"],
             capital_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "capital cost"], 
             marginal_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "marginal cost"],
             p_nom_extendable=True,
@@ -4743,48 +4739,21 @@ def add_pyrolysis(
             buses_i + " combu_direct_syngas",
             carrier="direct combustion syngas",
         )
-        # Route to condenser path
         n.add(
             "Link",
-            syngas1_buses_i + " route to condensator",
+            syngas1_buses_i + " condensator combu",
             bus0=syngas1_buses_i,
-            bus1=syngas2_buses_i,
-            carrier="route syngas to condensator",
+            bus1=syngas2_buses_i,  # to condensator
+            bus2=combu_direct_syngas_buses_i,  # to direct combustion splitter
+            carrier="condensator combu",
             p_nom_extendable=True,
-            capital_cost=0.0,
-            marginal_cost=0.0,
-            efficiency=1.0,  # routing, no conversion
+            efficiency=pyrolysis_data.loc[
+                "condensator combu", "efficiency-conden"
+            ],  # to condensator
+            efficiency2=pyrolysis_data.loc[
+                "condensator combu", "efficiency-combu"
+            ],  # send to direct combustion
         )
-
-        # Route to direct combustion path
-        n.add(
-            "Link",
-            syngas1_buses_i + " route to direct combu",
-            bus0=syngas1_buses_i,
-            bus1=combu_direct_syngas_buses_i,
-            carrier="route syngas to direct combu",
-            p_nom_extendable=True,
-            capital_cost=0.0,
-            marginal_cost=0.0,
-            efficiency=1.0,  # routing, no conversion
-        )
-        
-        #this is wrong (below) cause eff. get fixed)
-        # n.add(
-        #     "Link",
-        #     syngas1_buses_i + " condensator combu",
-        #     bus0=syngas1_buses_i,
-        #     bus1=syngas2_buses_i,  # to condensator
-        #     bus2=combu_direct_syngas_buses_i,  # to direct combustion splitter
-        #     carrier="condensator combu",
-        #     p_nom_extendable=True,
-        #     efficiency=pyrolysis_data.loc[
-        #         "condensator combu", "efficiency-conden"
-        #     ],  # to condensator
-        #     efficiency2=pyrolysis_data.loc[
-        #         "condensator combu", "efficiency-combu"
-        #     ],  # send to direct combustion
-        # )
 
         # Direct combustion of syngas for heat (only where DH exists)
         if len(dh_locations) > 0:  ########new######
@@ -4968,30 +4937,6 @@ def add_pyrolysis(
                 ],  # combustion of syngas 2 to produce heat
             )
 
-        # syngas cogeneration (elec + heat, only where DH exists)
-        if len(dh_locations) > 0:  ########new######
-            n.add(
-                "Link",
-                dh_locations + " syngas cogen",  ########new######
-                bus0=dh_locations + " syngas_cogeneration",  ########new######
-                bus1=dh_locations,  ########new######
-                bus2=heat_buses_dh,  ########new######
-                carrier="syngas cogen",
-                p_nom_extendable=True,
-                marginal_cost=pyrolysis_data.loc[
-                    "syngas cogen", "marginal cost"
-                ],
-                capital_cost=pyrolysis_data.loc[
-                    "syngas cogen", "capital cost"
-                ],
-                efficiency=pyrolysis_data.loc[
-                    "syngas cogen", "efficiency-elec"
-                ],
-                efficiency2=pyrolysis_data.loc[
-                    "syngas cogen", "efficiency-heat"
-                ],
-            )
-
         # adsorption: syngas -> H2 + syngas_wo_h2
         n.add(
             "Link",
@@ -5086,7 +5031,29 @@ def add_pyrolysis(
                 ],  # heat eff
             )
 
-
+        # syngas cogeneration (elec + heat, only where DH exists)
+        if len(dh_locations) > 0:  ########new######
+            n.add(
+                "Link",
+                dh_locations + " syngas cogen",  ########new######
+                bus0=dh_locations + " syngas_cogeneration",  ########new######
+                bus1=dh_locations,  ########new######
+                bus2=heat_buses_dh,  ########new######
+                carrier="syngas cogen",
+                p_nom_extendable=True,
+                marginal_cost=pyrolysis_data.loc[
+                    "syngas cogen", "marginal cost"
+                ],
+                capital_cost=pyrolysis_data.loc[
+                    "syngas cogen", "capital cost"
+                ],
+                efficiency=pyrolysis_data.loc[
+                    "syngas cogen", "efficiency-elec"
+                ],
+                efficiency2=pyrolysis_data.loc[
+                    "syngas cogen", "efficiency-heat"
+                ],
+            )
 
 
 def add_industry(
