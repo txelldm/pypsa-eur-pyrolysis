@@ -20,6 +20,7 @@ from scripts._helpers import (
 
 configfile: "config/config.default.yaml"
 configfile: "config/plotting.default.yaml"
+configfile: "/home/mdomenec/pypsa-eur-tx2new/config/config.pyroTechs.yaml"
 
 
 if Path("config/config.yaml").exists():

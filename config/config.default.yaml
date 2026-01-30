@@ -720,7 +720,7 @@ sector:
   regional_oil_demand: true
   regional_coal_demand: false
   regional_co2_sequestration_potential:
-    enable: true
+    enable: false
     attribute:
     - conservative estimate Mt
     - conservative estimate GAS Mt
@@ -799,7 +799,7 @@ sector:
   gas_network_connectivity_upgrade: 1
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
-  biomass_spatial: true
+  biomass_spatial: false
   biomass_transport: false
   biogas_upgrading: true
   biogas_upgrading_cc: false

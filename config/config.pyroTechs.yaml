@@ -17,9 +17,9 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: all #"small_test_data"  #all
+  name: "no_heat_vent" #"small_test_data"  #all
   scenarios:
-    enable: true
+    enable: false
     file: config/scenarios.yaml
   disable_progressbar: false
   shared_resources:
@@ -678,7 +678,7 @@ sector:
     urban central: true
     urban decentral: true
     rural: true
-  marginal_cost_heat_vent: 0.02
+  marginal_cost_heat_vent: 1000 #0.02 si default  #this is the penalty for venting heat to the atmosphere
   allam_cycle_gas: true
   hydrogen_fuel_cell: true
   hydrogen_turbine: true
@@ -817,10 +817,10 @@ sector:
       gas: 122
       oil: 125
   pyrolysis_multi-output:
-    enable: false #true #false
-  flash_pyrolysis: true
-  slow_pyrolysis_CHP: true
-  slow_pyrolysis_H2: true
+    enable: true #true #false
+  flash_pyrolysis: false
+  slow_pyrolysis_CHP: false
+  slow_pyrolysis_H2: false
 
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#industry
