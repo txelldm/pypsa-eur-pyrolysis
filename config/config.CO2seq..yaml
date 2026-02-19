@@ -40,9 +40,6 @@ scenario:
   sector_opts:
   - ''
   planning_horizons:
-  # - 2025
-  # - 2035
-  # - 2045
   - 2050
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
@@ -461,10 +458,10 @@ sector:
   transport: true
   heating: true
   biomass: true
-  industry: true
-  shipping: true
-  aviation: true
-  agriculture: true
+  industry: true 
+  shipping: false #ships burning methanol  emit CO₂ at the ship
+  aviation: false #aviation demand using fossil kerosene (direct combustion emissions).
+  agriculture: false  #co2 emissions
   fossil_fuels: true
   district_heating:
     potential: 0.6
@@ -638,7 +635,7 @@ sector:
   shipping_methanol_efficiency: 0.46
   shipping_oil_efficiency: 0.40
   aviation_demand_factor: 1.
-  HVC_demand_factor: 1.
+  HVC_demand_factor: 0. #1. 
   time_dep_hp_cop: true
   heat_pump_sink_T_individual_heating: 55.
   reduce_space_heat_exogenously: true
@@ -703,11 +700,11 @@ sector:
   co2_sequestration_potential:
     2020: 0
     2025: 0
-    2030: 5
-    2035: 10
-    2040: 15
-    2045: 20
-    2050: 25
+    2030: 40
+    2035: 100
+    2040: 180
+    2045: 250
+    2050: 200
   co2_sequestration_cost: 00
   co2_sequestration_lifetime: 50
   co2_spatial: false

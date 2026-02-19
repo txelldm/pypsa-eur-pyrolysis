@@ -28,22 +28,21 @@ run:
   use_shadow_directory: false
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#foresight
-foresight: overnight
+foresight: myopic
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#scenario
 # Wildcard docs in https://pypsa-eur.readthedocs.io/en/latest/wildcards.html
 scenario:
   clusters:
-  - 3
+  - 1
   opts:
   - ''
   sector_opts:
   - ''
   planning_horizons:
-  # - 2025
-  # - 2035
-  # - 2045
-  - 2050
+  - 2025
+  - 2035
+  - 2045
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
 countries:
@@ -66,7 +65,7 @@ co2_budget:
   2030: 0.450 # 55% reduction by 2030 (Ff55)
   2035: 0.250
   2040: 0.100 # 90% by 2040
-  2045: 0.050
+  2045: 0.000
   2050: 0.000 # climate-neutral by 2050
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#electricity
@@ -474,7 +473,8 @@ sector:
       2030: 0.25
       2035: 0.4
       2040: 0.55
-      2045: 0.75
+      2045: 1
+
       2050: 1.0
     district_heating_loss: 0.15
     supply_temperature_approximation:
@@ -590,7 +590,7 @@ sector:
     2030: 0.2
     2035: 0.45
     2040: 0.7
-    2045: 0.85
+    2045: 1
     2050: 1
   land_transport_ice_share:
     2020: 1
@@ -598,7 +598,7 @@ sector:
     2030: 0.8
     2035: 0.55
     2040: 0.3
-    2045: 0.15
+    2045: 0
     2050: 0
   transport_electric_efficiency: 53.19 # 1 MWh_el = 53.19*100 km
   transport_fuel_cell_efficiency: 30.003 # 1 MWh_H2 = 30.003*100 km
@@ -625,7 +625,7 @@ sector:
     2030: 0.15
     2035: 0.35
     2040: 0.55
-    2045: 0.8
+    2045: 1
     2050: 1
   shipping_oil_share:
     2020: 1
@@ -633,13 +633,13 @@ sector:
     2030: 0.85
     2035: 0.65
     2040: 0.45
-    2045: 0.2
+    2045: 0
     2050: 0
   shipping_methanol_efficiency: 0.46
   shipping_oil_efficiency: 0.40
   aviation_demand_factor: 1.
   HVC_demand_factor: 1.
-  time_dep_hp_cop: true
+  time_dep_hp_cop: false # if cluster =1 this gives error
   heat_pump_sink_T_individual_heating: 55.
   reduce_space_heat_exogenously: true
   reduce_space_heat_exogenously_factor:
@@ -648,7 +648,7 @@ sector:
     2030: 0.09
     2035: 0.11
     2040: 0.16
-    2045: 0.21
+    2045: 0.29
     2050: 0.29
   retrofitting:
     retro_endogen: false
@@ -703,10 +703,10 @@ sector:
   co2_sequestration_potential:
     2020: 0
     2025: 0
-    2030: 5
-    2035: 10
-    2040: 15
-    2045: 20
+    2030: 10
+    2035: 15
+    2040: 20
+    2045: 25
     2050: 25
   co2_sequestration_cost: 00
   co2_sequestration_lifetime: 50
@@ -966,7 +966,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: 2H
+    resolution_sector: 6H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:

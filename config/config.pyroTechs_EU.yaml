@@ -17,9 +17,9 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: all #"small_test_data"  #all
+  name: "EU_pyro" #"small_test_data"  #all
   scenarios:
-    enable: true
+    enable: false
     file: config/scenarios.yaml
   disable_progressbar: false
   shared_resources:
@@ -34,20 +34,50 @@ foresight: overnight
 # Wildcard docs in https://pypsa-eur.readthedocs.io/en/latest/wildcards.html
 scenario:
   clusters:
-  - 3
+  - 39
   opts:
   - ''
   sector_opts:
   - ''
   planning_horizons:
-  # - 2025
-  # - 2035
-  # - 2045
   - 2050
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
 countries:
+- AL
+- AT
+- BA
+- BE
+- BG
+- CH
+- CZ
 - DE
+- DK
+- EE
+- ES
+- FI
+- FR
+- GB
+- GR
+- HR
+- HU
+- IE
+- IT
+- LT
+- LU
+- LV
+- ME
+- MK
+- NL
+- 'NO'
+- PL
+- PT
+- RO
+- RS
+- SE
+- SI
+- SK
+- XK
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#snapshots
 snapshots:
@@ -703,11 +733,11 @@ sector:
   co2_sequestration_potential:
     2020: 0
     2025: 0
-    2030: 5
-    2035: 10
-    2040: 15
-    2045: 20
-    2050: 25
+    2030: 40
+    2035: 100
+    2040: 180
+    2045: 250
+    2050: 280 #Mt
   co2_sequestration_cost: 00
   co2_sequestration_lifetime: 50
   co2_spatial: false
@@ -942,7 +972,7 @@ costs:
 clustering:
   mode: busmap #administrative #busmap
   administrative:
-    level: 1
+    level: 0
   focus_weights: false
   copperplate_regions: []
   build_bidding_zones:

@@ -4847,7 +4847,7 @@ def add_pyrolysis(
             efficiency=pyrolysis_data.loc["FT", "efficiency"],
         )
 
-        # --- (B) Oil -> direct combustion fuel bus, OPTIONAL ---
+        # --- (B) Oil -> direct combustion fuel bus, route--
         # (this link is just a "send oil to the combustion unit" pipe)
         n.add(
             "Link",
@@ -4875,7 +4875,7 @@ def add_pyrolysis(
                 efficiency=pyrolysis_data.loc["direct combu oil", "efficiency"],
             )
 
-        # --- (C) Oil -> cogeneration fuel bus, OPTIONAL ---
+        # --- (C) Oil -> cogen route
         n.add(
             "Link",
             buses_i + " oil to cogen bus",
@@ -6891,26 +6891,25 @@ if __name__ == "__main__":
             configfile="config/config.pyroTechs.yaml",
         )
 
-        #change
-        #only for debugging!!! go to already have files for debugging
-        # debug_base = "/home/mdomenec/pypsa-eur-tx2new/debugging"
-        # orig_root = "/home/mdomenec/pypsa-eur-tx2new/resources"
+        # Optional path remapping for debug runs with pre-generated inputs.
+        debug_base = os.environ.get("PYPSA_DEBUG_BASE")
+        orig_root = os.environ.get("PYPSA_ORIG_ROOT")
 
-        for name, val in snakemake.input.items():
-            # some entries may be unnamed (name is None); skip those
-            if name is None:
-                continue
+        if debug_base and orig_root:
+            for name, val in snakemake.input.items():
+                # some entries may be unnamed (name is None); skip those
+                if name is None:
+                    continue
 
-            if isinstance(val, str):
-                new_val = val.replace(orig_root, debug_base)
-            elif isinstance(val, list):
-                new_val = [v.replace(orig_root, debug_base) for v in val]
-            else:
-                # just leave weird types unchanged
-                continue
+                if isinstance(val, str):
+                    new_val = val.replace(orig_root, debug_base)
+                elif isinstance(val, list):
+                    new_val = [v.replace(orig_root, debug_base) for v in val]
+                else:
+                    # just leave weird types unchanged
+                    continue
 
-            setattr(snakemake.input, name, new_val)
-        #change
+                setattr(snakemake.input, name, new_val)
 
     configure_logging(snakemake)  # pylint: disable=E0606
     set_scenario_config(snakemake)
