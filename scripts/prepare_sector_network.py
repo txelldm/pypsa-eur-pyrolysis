@@ -4643,16 +4643,17 @@ def add_pyrolysis(
 
         # district-heating mapping consistent with biomass nodes
         urban_central_buses = n.buses.index[n.buses.carrier == "urban central heat"]  # find all district heating buses and their locations
+        #selects only locations with urban central heat (the location not the name). eg: DE0 0 urban central heat  →  DE0 0
         if len(urban_central_buses) > 0:  
             urban_central_locations = urban_central_buses.str[
                 : -len(" urban central heat")
             ]  
-            
-            dh_locations = (pd.Index(buses_i).intersection(urban_central_locations))  # only those locations that also have biomass nodes
+            # find valid dh locations that exist in buses_i and urban central
+            dh_locations = (pd.Index(buses_i).intersection(urban_central_locations))  #Select locations that both exist in AC and biomass (buses_i) and have urban central heat buses
             # map location -> corresponding DH bus name
             heat_bus_map = pd.Series(urban_central_buses, index=urban_central_locations)  
-            heat_buses_dh = heat_bus_map.loc[dh_locations].values  
-        else:  
+            heat_buses_dh = heat_bus_map.loc[dh_locations].values  #Get the full heat bus names for valid DH locations
+        else:  #if no dh location, keep it empty. 
             dh_locations = pd.Index([])  
             heat_buses_dh = np.array([])  
 
@@ -4664,44 +4665,50 @@ def add_pyrolysis(
         # ------------------------------------------------------------------
         #syngas storage
         syngas_store_buses_i = n.add(
-            "Bus", buses_i + " syngas_store", carrier="syngas store"
+            "Bus", buses_i + " syngas_store_Bus", carrier="syngas store"
         )  # buses for syngas store in each cluster
         n.add(
             "Store",
-            syngas_store_buses_i + "store",
+            syngas_store_buses_i + " ",
             bus=syngas_store_buses_i,
             carrier="syngas store",
             capital_cost=pyrolysis_data.loc["syngas store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["syngas store", "marginal cost"],
             e_nom_extendable=True,
+            e_cyclic = True,
+            e_cyclic_per_period = True,
         )
 
         # Syngas Storage without hydrogen
         syngas_wo_h2_buses_i = n.add(
-            "Bus", buses_i + " syngas_wo_h2_store", carrier="syngas wo h2 store"
+            "Bus", buses_i + " syngas_wo_h2_store_Bus", carrier="syngas wo h2 store"
         )  # buses for syngas store in each cluster
         n.add(
             "Store",
-            syngas_wo_h2_buses_i + "store",
+            syngas_wo_h2_buses_i + " ",
             bus=syngas_wo_h2_buses_i,
             carrier="syngas wo h2 store",
             capital_cost=pyrolysis_data.loc["syngas wo h2 store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["syngas wo h2 store", "marginal cost"],
             e_nom_extendable=True,
+            e_cyclic = True,
+            e_cyclic_per_period = True,
         )
 
         # Oil Storage
         oil_buses_i = n.add(
-            "Bus", buses_i + " oil_store", carrier="oil store"
+            "Bus", buses_i + " oil_store_Bus", carrier="oil store"
         )  # buses for oil store in each cluster
         n.add(
             "Store",
-            oil_buses_i + "store",
+            oil_buses_i + " ",
             bus=oil_buses_i,
             carrier="oil store",
             capital_cost=pyrolysis_data.loc["oil store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["oil store", "marginal cost"],
             e_nom_extendable=True,
+            e_cyclic = True,
+            e_cyclic_per_period = True,
         )
 
         # ------------------------------------------------------------------
@@ -4722,16 +4729,10 @@ def add_pyrolysis(
             p_nom_extendable=True,
             marginal_cost=pyrolysis_data.loc["pyrolysis main", "marginal cost"],
             capital_cost=pyrolysis_data.loc["pyrolysis main", "capital cost"],
-            efficiency=pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-biochar"
-            ],  # biochar
-            efficiency2=pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-syngas"
-            ],  # Syngas_bus
-            efficiency3=-pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-co2"
-            ],  # CO2 atmosphere
-        )
+            efficiency=pyrolysis_data.loc["pyrolysis main", "efficiency-biochar"],  # biochar
+            efficiency2=pyrolysis_data.loc["pyrolysis main", "efficiency-syngas"],  # Syngas_bus
+            efficiency3=-1*pyrolysis_data.loc["pyrolysis main", "efficiency-co2"],  # CO2 atmosphere
+            )
 
         # Syngas store (condensator) vs direct combustion
         syngas2_buses_i = n.add("Bus", buses_i + " syngas_2", carrier="syngas 2")
@@ -4770,7 +4771,7 @@ def add_pyrolysis(
 
 
         # Direct combustion of syngas for heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        if len(dh_locations) > 0:  #make sure that DH locations exist
             n.add(
                 "Link",
                 dh_locations + " syngas direct combustion for heat",  ########new######
@@ -4821,7 +4822,7 @@ def add_pyrolysis(
 
         # Oil routing (CHOICE): oil store -> (FT fuel) OR (direct heat) OR (cogen)
 
-        # --- (A) Oil -> FT intermediate (fuel route), OPTIONAL ---
+        # --- (A) route Oil -> synthetic fuel 
         n.add(
             "Link",
             buses_i + " oil to FT",
@@ -4847,8 +4848,7 @@ def add_pyrolysis(
             efficiency=pyrolysis_data.loc["FT", "efficiency"],
         )
 
-        # --- (B) Oil -> direct combustion fuel bus, route--
-        # (this link is just a "send oil to the combustion unit" pipe)
+        # --- (B) route Oil -> direct combustion for heat prod.
         n.add(
             "Link",
             buses_i + " oil to direct combustion bus",
@@ -4875,7 +4875,7 @@ def add_pyrolysis(
                 efficiency=pyrolysis_data.loc["direct combu oil", "efficiency"],
             )
 
-        # --- (C) Oil -> cogen route
+        # --- (C) rpute Oil -> cogen (oil CHP)
         n.add(
             "Link",
             buses_i + " oil to cogen bus",
@@ -4909,7 +4909,7 @@ def add_pyrolysis(
         # multi_path_syngas: from syngas store (adsorption, cogeneration, direct combustion)
         # ------------------------------------------------------------------
         adsorbtion_buses_i = n.add(
-            "Bus", buses_i + " adsorption", carrier="adsorption"
+            "Bus", buses_i + " adsorbtion", carrier="adsorbtion"
         )
         syngas_cogeneration_buses_i = n.add(
             "Bus", buses_i + " syngas_cogeneration", carrier="syngas cogeneration"
@@ -4922,14 +4922,13 @@ def add_pyrolysis(
 
 
         # CHOICE: syngas store -> (adsorption) OR (cogen) OR (direct combustion)
-
-        # Route 1: syngas_store -> adsorption (optional)
+        # Route 1: syngas_store -> adsorption 
         n.add(
             "Link",
             buses_i + " syngas_store to adsorption",
             bus0=syngas_store_buses_i,
             bus1=adsorbtion_buses_i,
-            carrier="syngas_store to adsorption",
+            carrier="syngas_store to adsorbtion",
             p_nom_extendable=True,
             efficiency=1.0,
             capital_cost=0.0,
@@ -5059,13 +5058,13 @@ def add_pyrolysis(
         )
         
         # syngas_wo_h2 cogeneration (elec + heat, only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        if len(dh_locations) > 0: 
             n.add(
                 "Link",
-                dh_locations + " syngas_wo_h2 cogen",  ########new######
-                bus0=syngas_wo_h2_cogeneration_buses_i,  ########new######
-                bus1=nodes,  ########new######
-                bus2=heat_buses_dh,  ########new######
+                dh_locations + " syngas_wo_h2 cogen",  
+                bus0=syngas_wo_h2_cogeneration_buses_i,  
+                bus1=nodes,  #AC
+                bus2=heat_buses_dh,  #DH buses
                 carrier="syngas wo h2 cogen",
                 p_nom_extendable=True,
                 marginal_cost=pyrolysis_data.loc[
@@ -5097,11 +5096,11 @@ def add_pyrolysis(
 
 
         # direct combustion of syngas wo h2 for heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        if len(dh_locations) > 0:  
             n.add(
                 "Link",
-                dh_locations + " syngas wo h2 direct combustion for heat",  ########new######
-                bus0=combu_direct_syngas_wo_h2_buses_i,  ########new######
+                dh_locations + " syngas wo h2 direct combustion for heat",  
+                bus0=combu_direct_syngas_wo_h2_buses_i,  
                 bus1=heat_buses_dh,  ########new######
                 carrier="syngas wo h2 direct combustion for heat",
                 p_nom_extendable=True,
@@ -6873,43 +6872,37 @@ def add_import_options(
 if __name__ == "__main__":
     if "snakemake" not in globals():
         from scripts._helpers import mock_snakemake
-
-        # snakemake = mock_snakemake(
-        #     "prepare_sector_network",
-        #     opts="",
-        #     clusters="10",
-        #     sector_opts="",
-        #     planning_horizons="2050",
-        # )
         snakemake = mock_snakemake(
             "prepare_sector_network", ###changed for my networks for debugging
             opts="",
             clusters="3", ###changed for my networks for debugging
-            #ll="vopt",
+            ll="vopt",
             sector_opts="", 
             planning_horizons="2050", ###changed for my networks for debugging
-            configfile="config/config.pyroTechs.yaml",
+            configfile="config/config.debug.yaml",
         )
 
-        # Optional path remapping for debug runs with pre-generated inputs.
-        debug_base = os.environ.get("PYPSA_DEBUG_BASE")
-        orig_root = os.environ.get("PYPSA_ORIG_ROOT")
+        #change
+        #only for debugging!!! go to already have files for debugging
+        debug_base = "/home/mdomenec/pypsa-eur-tx2new/debugging"
+        orig_root = "/home/mdomenec/pypsa-eur-tx2new/resources"
 
-        if debug_base and orig_root:
-            for name, val in snakemake.input.items():
-                # some entries may be unnamed (name is None); skip those
-                if name is None:
-                    continue
+        for name, val in snakemake.input.items():
+            # some entries may be unnamed (name is None); skip those
+            if name is None:
+                continue
 
-                if isinstance(val, str):
-                    new_val = val.replace(orig_root, debug_base)
-                elif isinstance(val, list):
-                    new_val = [v.replace(orig_root, debug_base) for v in val]
-                else:
-                    # just leave weird types unchanged
-                    continue
+            if isinstance(val, str):
+                new_val = val.replace(orig_root, debug_base)
+            elif isinstance(val, list):
+                new_val = [v.replace(orig_root, debug_base) for v in val]
+            else:
+                # just leave weird types unchanged
+                continue
 
-                setattr(snakemake.input, name, new_val)
+            setattr(snakemake.input, name, new_val)
+        #change
+
 
     configure_logging(snakemake)  # pylint: disable=E0606
     set_scenario_config(snakemake)

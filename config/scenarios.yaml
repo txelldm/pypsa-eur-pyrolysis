@@ -94,88 +94,35 @@
     co2_sequestration_potential:
       2050: 25
 
-# 5_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#     co2_sequestration_potential:
-#       2050: 5
 
+25_TECHS:
+  sector:
+    pyrolysis_multi-output:
+      enable: false #true #false
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 25
+5_TECHS:
+  sector:
+    pyrolysis_multi-output:
+      enable: false #true #false
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 5
 
+25_Med-TECHS:
+  biomass:
+    scenario: ENS_Med
+  sector:
+    pyrolysis_multi-output:
+      enable: false #true #false
+    flash_pyrolysis: true
+    slow_pyrolysis_CHP: true
+    slow_pyrolysis_H2: true
+    co2_sequestration_potential:
+      2050: 25
 
-# 600_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#     co2_sequestration_potential:
-#       2050: 600
-# 600_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#     co2_sequestration_potential:
-#       2050: 600
-
-
-
-# 400_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#     co2_sequestration_potential:
-#       2050: 400
-# 400_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#     co2_sequestration_potential:
-#       2050: 400
-
-
-
-
-# 100_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#     co2_sequestration_potential:
-#       2050: 100
-# 100_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#     co2_sequestration_potential:
-#       2050: 100
-
-# # 50_pyro:
-# #   sector:
-# #     pyrolysis_multi-output:
-# #       enable: true
-# #     co2_sequestration_potential:
-# #       2050: 50
-# # 50_NOpyro:
-# #   sector:
-# #     pyrolysis_multi-output:
-# #       enable: false
-# #     co2_sequestration_potential:
-# #       2050: 50
-
-# 0_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#     co2_sequestration_potential:
-#       2050: 0
-
-
-# # 2_Pyro_MB:
-# #   biomass:
-# #     scenario: ENS_Med
-
-# # 2_NOPyro_MB:
-# #   biomass:
-# #     scenario: ENS_Med
-# #   sector:
-# #     flash_pyrolysis: false
-# #     slow_pyrolysis_CHP: false
-# #     slow_pyrolysis_H2: false
