@@ -1172,7 +1172,7 @@ solving:
 
   solver:
     name: gurobi
-    options: gurobi-exploration
+    options: gurobi-default
 
   solver_options:
     gurobi-exploration:        #my config for fast scenarios #new 
@@ -1205,7 +1205,7 @@ solving:
       threads: 32
       method: 2 # barrier
       crossover: 0
-      BarConvTol: 1.e-6
+      BarConvTol: 1.e-3
       Seed: 123
       AggFill: 0
       PreDual: 0

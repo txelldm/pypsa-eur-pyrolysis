@@ -7153,7 +7153,9 @@ if __name__ == "__main__":
 
     if options["allam_cycle_gas"]:
         add_allam_gas(n, costs, pop_layout=pop_layout, spatial=spatial)
-
+    config = snakemake.config #new
+    add_pyrolysis(n, spatial, options, pyrolysis_data, pop_layout) #new
+    
     n = set_temporal_aggregation(
         n, snakemake.params.time_resolution, snakemake.input.snapshot_weightings
     )
@@ -7186,8 +7188,7 @@ if __name__ == "__main__":
         nyears,
         limit,
     )
-    config = snakemake.config #new
-    add_pyrolysis(n, spatial, options, pyrolysis_data, pop_layout) #new
+
 
     maxext = snakemake.params["lines"]["max_extension"]
     if maxext is not None:

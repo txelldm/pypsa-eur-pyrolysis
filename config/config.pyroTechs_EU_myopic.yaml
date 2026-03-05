@@ -17,7 +17,7 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: "EU_NOpyro2" #"small_test_data"  #all
+  name: "EU_pyro2_myopic" #"small_test_data"  #all
   scenarios:
     enable: false
     file: config/scenarios.yaml
@@ -28,7 +28,7 @@ run:
   use_shadow_directory: false
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#foresight
-foresight: overnight
+foresight: overnight #myopic
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#scenario
 # Wildcard docs in https://pypsa-eur.readthedocs.io/en/latest/wildcards.html
@@ -40,7 +40,9 @@ scenario:
   sector_opts:
   - ''
   planning_horizons:
-  - 2050
+  - 2030
+  # - 2040
+  # - 2050
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
 countries:
@@ -850,7 +852,7 @@ sector:
       gas: 122
       oil: 125 
   pyrolysis_multi-output:
-    enable: false #true #false
+    enable: true #true #false
   flash_pyrolysis: false
   slow_pyrolysis_CHP: false
   slow_pyrolysis_H2: false
