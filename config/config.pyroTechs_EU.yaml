@@ -17,9 +17,9 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: "EU_NOpyro2" #"small_test_data"  #all
+  name: all #"small_test_data"  #all
   scenarios:
-    enable: false
+    enable: true
     file: config/scenarios.yaml
   disable_progressbar: false
   shared_resources:
@@ -850,7 +850,8 @@ sector:
       gas: 122
       oil: 125 
   pyrolysis_multi-output:
-    enable: false #true #false
+    enable: false
+    include_stores: false
   flash_pyrolysis: false
   slow_pyrolysis_CHP: false
   slow_pyrolysis_H2: false

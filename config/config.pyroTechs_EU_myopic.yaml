@@ -852,7 +852,8 @@ sector:
       gas: 122
       oil: 125 
   pyrolysis_multi-output:
-    enable: true #true #false
+    enable: false
+    include_stores: false
   flash_pyrolysis: false
   slow_pyrolysis_CHP: false
   slow_pyrolysis_H2: false

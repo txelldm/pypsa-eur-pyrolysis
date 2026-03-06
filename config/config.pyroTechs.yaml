@@ -17,9 +17,9 @@ remote:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
   prefix: ""
-  name: all #"small_test_data"  #all
+  name: "co2_200_pyro" #"small_test_data"  #all
   scenarios:
-    enable: true
+    enable: false
     file: config/scenarios.yaml
   disable_progressbar: false
   shared_resources:
@@ -819,8 +819,11 @@ sector:
       methanol: 121
       gas: 122
       oil: 125
+  # pyrolysis_multi-output:
+  #   enable: true #true #false
   pyrolysis_multi-output:
-    enable: true #true #false
+    enable: true
+    include_stores: false
   flash_pyrolysis: false
   slow_pyrolysis_CHP: false
   slow_pyrolysis_H2: false
@@ -934,8 +937,8 @@ costs:
   custom_cost_fn: data/custom_costs.csv
   overwrites: {}
   emission_prices:
-    enable: false
-    co2: 0.
+    enable: true
+    co2: 200
     co2_monthly_prices: false
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
@@ -966,7 +969,7 @@ clustering:
       ramp_limit_down: max
   temporal:
     resolution_elec: false
-    resolution_sector: 2H
+    resolution_sector: 1H
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#adjustments
 adjustments:

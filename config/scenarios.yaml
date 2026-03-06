@@ -15,114 +15,64 @@
 # #       renewable_carriers: [wind, solar] # override the list of renewable carriers
 
 
-
-# EU_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-
-# EU_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-
-
-
-
-# multi-output scenarios
-# MB_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#   biomass:
-#     scenario: ENS_Med
-# MB_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#   biomass:
-#     scenario: ENS_Med
-
-# HB_pyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: true
-#   biomass:
-#     scenario: ENS_High
-# HB_NOpyro:
-#   sector:
-#     pyrolysis_multi-output:
-#       enable: false
-#   biomass:
-#     scenario: ENS_High
-
-25_pyro:
+EU_pyro:
   sector:
     pyrolysis_multi-output:
       enable: true
-    co2_sequestration_potential:
-      2050: 25
-25_NOpyro:
+EU_NOpyro:
   sector:
     pyrolysis_multi-output:
       enable: false
-    co2_sequestration_potential:
-      2050: 25
 
-5_pyro:
+
+EU_pyro_gas:
   sector:
     pyrolysis_multi-output:
       enable: true
-    co2_sequestration_potential:
-      2050: 5
+    gas_network: true
 
-
-25_Med-pyro:
-  biomass:
-    scenario: ENS_Med
-  sector:
-    pyrolysis_multi-output:
-      enable: true
-    co2_sequestration_potential:
-      2050: 25
-25_Med-NOpyro:
-  biomass:
-    scenario: ENS_Med
+EU_NOpyro_gas:
   sector:
     pyrolysis_multi-output:
       enable: false
-    co2_sequestration_potential:
-      2050: 25
+    gas_network: true
 
-
-25_TECHS:
+EU_pyro_H2:
   sector:
     pyrolysis_multi-output:
-      enable: false #true #false
-    flash_pyrolysis: true
-    slow_pyrolysis_CHP: true
-    slow_pyrolysis_H2: true
-    co2_sequestration_potential:
-      2050: 25
-5_TECHS:
+      enable: true
+    H2_network: true
+
+EU_NOpyro_H2:
   sector:
     pyrolysis_multi-output:
-      enable: false #true #false
-    flash_pyrolysis: true
-    slow_pyrolysis_CHP: true
-    slow_pyrolysis_H2: true
-    co2_sequestration_potential:
-      2050: 5
+      enable: false
+    H2_network: true
 
-25_Med-TECHS:
-  biomass:
-    scenario: ENS_Med
+EU_pyro_CO2:
   sector:
     pyrolysis_multi-output:
-      enable: false #true #false
-    flash_pyrolysis: true
-    slow_pyrolysis_CHP: true
-    slow_pyrolysis_H2: true
-    co2_sequestration_potential:
-      2050: 25
+      enable: true
+    co2_spatial: true
+    co2_network: true
 
+EU_NOpyro_CO2:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+
+EU_pyro_Bm_spatial:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    biomass_spatial: true #change to true
+
+
+EU_pyro_Bm_spatial_transport:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    biomass_spatial: true #change to true
+    biomass_transport: true

@@ -4510,7 +4510,6 @@ def add_biomass(
                 e_nom_extendable=True,
             )
 
-
     if options["flash_pyrolysis"]:
         print("adding flash-pyrolysis...")
         # # Biochar store (global)
@@ -4540,6 +4539,7 @@ def add_biomass(
             p_nom_extendable=True,
             lifetime=25
         )
+    
     if options["slow_pyrolysis_CHP"]:
         print("adding slow-pyrolysis-CHP...")
         ensure_biochar_store(n)
@@ -4562,6 +4562,8 @@ def add_biomass(
             p_nom_extendable=True,
             lifetime=25
         )
+
+
     if options["slow_pyrolysis_H2"]:
         print("adding slow-pyrolysis-H2...")
         ensure_biochar_store(n)
@@ -4573,10 +4575,14 @@ def add_biomass(
             bus1=spatial.h2.nodes,   # to H2 load
             bus2="biochar",
             bus3="co2 atmosphere",
+            bus4=nodes, #to elec load
+            bus5=urban_central + " urban central heat", #to district heating
             carrier="slow-pyrolysis-H2",
             efficiency=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-H2"],  #H2
             efficiency2=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-biochar"], #biochar
             efficiency3= -pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-co2"], #negative emissions
+            efficiency4=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-elec"],
+            efficiency5=pyrolysis_data.loc["slow-pyrolysis-H2", "efficiency-heat"],
             capital_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "capital cost"], 
             marginal_cost=pyrolysis_data.loc["slow-pyrolysis-H2", "marginal cost"],
             p_nom_extendable=True,
@@ -4618,96 +4624,101 @@ def add_pyrolysis(
             logger.info("Biomass sector disabled — skipping pyrolysis addition.")
             return
 
-        
         buses_i = spatial.biomass.df.index #index for pyrolysis: select only where biomass exists
-        # buses_i = n.buses.index[n.buses.carrier == "AC"]  #select only AC buses (if not it also goes to battery and H2) DELETE
         # optional: geometry for new buses if needed later
+        #delete below?
         bus_sub_dict = {
             k: n.buses[k].reindex(buses_i).values for k in ["x", "y", "country"]
         }  
 
         # Biochar store (global)
         n.add("Carrier", "biochar")  # co2 seq. emissions from biochar
-        n.add("Bus", "biochar", carrier="biochar")
+        n.add("Bus", "biochar", carrier="biochar", unit="MWh_LHV biochar")
         n.add(
             "Store",
             "biochar",
             e_nom_extendable=True,
             bus="biochar",
-        )  # no e_min_pu=-1 cause biochar should not have negative values but positive only
+        )  
 
         # district-heating mapping consistent with biomass nodes
         urban_central_buses = n.buses.index[n.buses.carrier == "urban central heat"]  # find all district heating buses and their locations
+        #selects only locations with urban central heat (the location not the name). eg: DE0 0 urban central heat  →  DE0 0
         if len(urban_central_buses) > 0:  
             urban_central_locations = urban_central_buses.str[
                 : -len(" urban central heat")
             ]  
-            
-            dh_locations = (pd.Index(buses_i).intersection(urban_central_locations))  # only those locations that also have biomass nodes
+            # find valid dh locations that exist in buses_i and urban central
+            dh_locations = (pd.Index(buses_i).intersection(urban_central_locations))  #Select locations that both exist in AC and biomass (buses_i) and have urban central heat buses
             # map location -> corresponding DH bus name
             heat_bus_map = pd.Series(urban_central_buses, index=urban_central_locations)  
-            heat_buses_dh = heat_bus_map.loc[dh_locations].values  
-        else:  
+            heat_buses_dh = heat_bus_map.loc[dh_locations].values  #Get the full heat bus names for valid DH locations
+        else:  #if no dh location, keep it empty. 
             dh_locations = pd.Index([])  
             heat_buses_dh = np.array([])  
 
         # electricity/load nodes (AC) aligned with buses_i
-        nodes = pop_layout.index  ########new######
-        # ensure nodes match buses_i order (safety)
-        #nodes = pd.Index(nodes).reindex(buses_i, fill_value=None)[0]  ########new######
+        nodes = pop_layout.index  
 
         # ------------------------------------------------------------------
-        # Syngas Storage
+        # Storages
         # ------------------------------------------------------------------
+        #syngas storage
         syngas_store_buses_i = n.add(
-            "Bus", buses_i + " syngas_store", carrier="syngas store"
+            "Bus", buses_i + " syngas_store", carrier="syngas store", unit="MWh_LHV syngas"
         )  # buses for syngas store in each cluster
-        # syngas_store_buses_i = n.add("Bus", buses_i + " syngas_store",  **bus_sub_dict, carrier= "syngas store")  #buses for syngas store in each cluster
         n.add(
             "Store",
-            syngas_store_buses_i + "store",
+            syngas_store_buses_i + " ",
             bus=syngas_store_buses_i,
             carrier="syngas store",
             capital_cost=pyrolysis_data.loc["syngas store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["syngas store", "marginal cost"],
             e_nom_extendable=True,
+            #e_cyclic = True,
+            e_cyclic_per_period = True,
+            e_initial = 0,
         )
 
         # Syngas Storage without hydrogen
         syngas_wo_h2_buses_i = n.add(
-            "Bus", buses_i + " syngas_wo_h2_store", carrier="syngas wo h2 store"
-        )  # buses for syngas store in each cluster
-        # syngas_wo_h2_buses_i = n.add("Bus", buses_i + " syngas_wo_h2_store",  **bus_sub_dict, carrier= "syngas wo h2 store")  #buses for syngas store in each cluster
+            "Bus", buses_i + " syngas_wo_h2_store", carrier="syngas wo h2 store", unit="MWh_LHV syngas"
+        )  # buses for syngas store wo H2 in each cluster
         n.add(
             "Store",
-            syngas_wo_h2_buses_i + "store",
+            syngas_wo_h2_buses_i + " ",
             bus=syngas_wo_h2_buses_i,
             carrier="syngas wo h2 store",
             capital_cost=pyrolysis_data.loc["syngas wo h2 store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["syngas wo h2 store", "marginal cost"],
             e_nom_extendable=True,
+            #e_cyclic = True,
+            e_cyclic_per_period = True,
+            e_initial = 0,
         )
 
         # Oil Storage
         oil_buses_i = n.add(
-            "Bus", buses_i + " oil_store", carrier="oil store"
+            "Bus", buses_i + " oil_store", carrier="oil store", unit="MWh_LHV bio-oil"
         )  # buses for oil store in each cluster
-        # oil_buses_i = n.add("Bus", buses_i + " oil_store",  **bus_sub_dict, carrier= "oil store")  #buses for oil store in each cluster
         n.add(
             "Store",
-            oil_buses_i + "store",
+            oil_buses_i + " ",
             bus=oil_buses_i,
             carrier="oil store",
             capital_cost=pyrolysis_data.loc["oil store", "capital cost"],
             marginal_cost=pyrolysis_data.loc["oil store", "marginal cost"],
             e_nom_extendable=True,
+            #e_cyclic = True,
+            e_cyclic_per_period = True,
+            e_initial = 0,  #I force the model to start and finish with 0 as it is an "intermediate store" and short-term 
         )
 
         # ------------------------------------------------------------------
         # Pyrolysis technology
         # ------------------------------------------------------------------
         # Pyrolysis Process
-        syngas1_buses_i = n.add("Bus", buses_i + " syngas_1", carrier="syngas 1")
+        syngas1_buses_i = n.add("Bus", buses_i + " syngas_1", carrier="syngas 1", unit="MWh_LHV syngas")
         n.add(
             "Link",
             syngas1_buses_i + " pyrolysis",
@@ -4721,46 +4732,53 @@ def add_pyrolysis(
             p_nom_extendable=True,
             marginal_cost=pyrolysis_data.loc["pyrolysis main", "marginal cost"],
             capital_cost=pyrolysis_data.loc["pyrolysis main", "capital cost"],
-            efficiency=pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-biochar"
-            ],  # biochar
-            efficiency2=pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-syngas"
-            ],  # Syngas_bus
-            efficiency3=-pyrolysis_data.loc[
-                "pyrolysis main", "efficiency-co2"
-            ],  # CO2 atmosphere
-        )
+            efficiency=pyrolysis_data.loc["pyrolysis main", "efficiency-biochar"],  # biochar
+            efficiency2=pyrolysis_data.loc["pyrolysis main", "efficiency-syngas"],  # Syngas_bus
+            efficiency3=-1*pyrolysis_data.loc["pyrolysis main", "efficiency-co2"],  # CO2 atmosphere
+            )
 
         # Syngas store (condensator) vs direct combustion
-        syngas2_buses_i = n.add("Bus", buses_i + " syngas_2", carrier="syngas 2")
+        syngas2_buses_i = n.add("Bus", buses_i + " syngas_2", carrier="syngas 2", unit="MWh_LHV syngas")
         combu_direct_syngas_buses_i = n.add(
             "Bus",
             buses_i + " combu_direct_syngas",
             carrier="direct combustion syngas",
         )
+
+        # Route to condenser path
         n.add(
             "Link",
-            syngas1_buses_i + " condensator combu",
+            syngas1_buses_i + " route to condensator",
             bus0=syngas1_buses_i,
-            bus1=syngas2_buses_i,  # to condensator
-            bus2=combu_direct_syngas_buses_i,  # to direct combustion splitter
-            carrier="condensator combu",
+            bus1=syngas2_buses_i,
+            carrier="route syngas to condensator",
             p_nom_extendable=True,
-            efficiency=pyrolysis_data.loc[
-                "condensator combu", "efficiency-conden"
-            ],  # to condensator
-            efficiency2=pyrolysis_data.loc[
-                "condensator combu", "efficiency-combu"
-            ],  # send to direct combustion
+            capital_cost=0.0,
+            marginal_cost=0.0,
+            efficiency=1.0,  # routing, no conversion
         )
 
+        # Route to direct combustion path
+        n.add(
+            "Link",
+            syngas1_buses_i + " route to direct combu",
+            bus0=syngas1_buses_i,
+            bus1=combu_direct_syngas_buses_i,
+            carrier="route syngas to direct combu",
+            p_nom_extendable=True,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+            efficiency=1.0,  # routing, no conversion
+        )
+        
+
+
         # Direct combustion of syngas for heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        if len(dh_locations) > 0:  #make sure that DH locations exist
             n.add(
                 "Link",
                 dh_locations + " syngas direct combustion for heat",  ########new######
-                bus0=dh_locations + " combu_direct_syngas",  ########new######
+                bus0=combu_direct_syngas_buses_i, #dh_locations + " combu_direct_syngas",  ########new######
                 bus1=heat_buses_dh,  ########new######
                 carrier="syngas direct combustion for heat",
                 p_nom_extendable=True,
@@ -4796,61 +4814,36 @@ def add_pyrolysis(
         # Oil process / cogeneration / direct combustion
         # ------------------------------------------------------------------
         oil_cogeneration_buses_i = n.add(
-            "Bus", buses_i + " oil_cogeneration", carrier="oil cogeneration"
+            "Bus", buses_i + " oil_cogeneration", carrier="oil cogeneration", unit="MWh_LHV bio-oil"
         )
         combu_direct_oil_buses_i = n.add(
-            "Bus", buses_i + " combu_direct_oil", carrier="direct combustion oil"
+            "Bus", buses_i + " combu_direct_oil", carrier="direct combustion oil", unit="MWh_LHV bio-oil"
         )
         FT_oil_buses_i = n.add(
-            "Bus", buses_i + " FT_oil", carrier="Fischer Tropsch pyro oil"
+            "Bus", buses_i + " FT_oil", carrier="Fischer Tropsch pyro oil", unit="MWh_LHV bio-oil"
         )
 
+        # Oil routing (CHOICE): oil store -> (FT fuel) OR (direct heat) OR (cogen)
+
+        # --- (A) route Oil -> synthetic fuel 
         n.add(
             "Link",
-            oil_cogeneration_buses_i + " oil process",
-            bus0=oil_buses_i,
-            bus1=FT_oil_buses_i,  # to FT process
-            bus2=oil_cogeneration_buses_i,  # cogeneration
-            bus3=combu_direct_oil_buses_i,  # direct combustion for heat
-            carrier="oil process",
+            buses_i + " oil to FT",
+            bus0=oil_buses_i,         # oil comes from oil_store bus
+            bus1=FT_oil_buses_i,      # goes to FT process bus
+            carrier="oil to FT",
             p_nom_extendable=True,
-            efficiency=pyrolysis_data.loc[
-                "oil process", "efficiency-to-FT"
-            ],  # to FT process
-            efficiency2=pyrolysis_data.loc[
-                "oil process", "efficiency-cogen"
-            ],  # to cogeneration
-            efficiency3=pyrolysis_data.loc[
-                "oil process", "efficiency-to-combu"
-            ],  # to direct combustion of the oil (only transport)
+            marginal_cost=0.0,        # you can add a specific marginal cost if you want
+            capital_cost=0.0,         # keep costs on the FT unit itself below
+            efficiency=1.0,           # this is just routing of oil to FT
         )
 
-        # Direct combustion of oil to heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
-            n.add(
-                "Link",
-                dh_locations + " oil direct combustion for heat",  ########new######
-                bus0=dh_locations + " combu_direct_oil",  ########new######
-                bus1=heat_buses_dh,  ########new######
-                carrier="oil direct combustion for heat",
-                p_nom_extendable=True,
-                marginal_cost=pyrolysis_data.loc[
-                    "direct combu oil", "marginal cost"
-                ],
-                capital_cost=pyrolysis_data.loc[
-                    "direct combu oil", "capital cost"
-                ],
-                efficiency=pyrolysis_data.loc[
-                    "direct combu oil", "efficiency"
-                ],  # direct combustion of the oil for heat
-            )
-
-        # FT oil to oil load (carrier "oil")
+        # FT conversion itself (
         n.add(
             "Link",
             FT_oil_buses_i,
-            bus0=FT_oil_buses_i,
-            bus1=spatial.oil.nodes,  # to oil load
+            bus0=FT_oil_buses_i, # unit="MWh_LHV bio-oil"
+            bus1=spatial.oil.nodes,  #to oil nodes , unit="MWh_th oil"
             carrier="Fischer Tropsch pyro oil",
             p_nom_extendable=True,
             marginal_cost=pyrolysis_data.loc["FT", "marginal cost"],
@@ -4858,86 +4851,91 @@ def add_pyrolysis(
             efficiency=pyrolysis_data.loc["FT", "efficiency"],
         )
 
-        # Oil cogeneration (elec + heat, only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        # --- (B) route Oil -> direct combustion for heat prod.
+        n.add(
+            "Link",
+            buses_i + " oil to direct combustion bus",
+            bus0=oil_buses_i,
+            bus1=combu_direct_oil_buses_i,
+            carrier="oil to direct combustion bus",
+            p_nom_extendable=True,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+            efficiency=1.0,
+        )
+
+        # Direct combustion to district heat (only where DH exists) 
+        if len(dh_locations) > 0:
             n.add(
                 "Link",
-                dh_locations + " oil cogeneration",  ########new######
-                bus0=dh_locations + " oil_cogeneration",  ########new######
-                bus1=dh_locations,  # electricity (AC bus) ########new######
-                bus2=heat_buses_dh,  # heat load ########new######
+                dh_locations + " oil direct combustion for heat",
+                bus0= combu_direct_oil_buses_i,   #dh_locations + " combu_direct_oil",
+                bus1=heat_buses_dh,
+                carrier="oil direct combustion for heat",
+                p_nom_extendable=True,
+                marginal_cost=pyrolysis_data.loc["direct combu oil", "marginal cost"],
+                capital_cost=pyrolysis_data.loc["direct combu oil", "capital cost"],
+                efficiency=pyrolysis_data.loc["direct combu oil", "efficiency"],
+            )
+
+        # --- (C) rpute Oil -> cogen (oil CHP)
+        n.add(
+            "Link",
+            buses_i + " oil to cogen bus",
+            bus0=oil_buses_i,
+            bus1=oil_cogeneration_buses_i,
+            carrier="oil to cogen bus",
+            p_nom_extendable=True,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+            efficiency=1.0,
+        )
+
+        # Oil cogeneration (elec + heat, only where DH exists) 
+        if len(dh_locations) > 0:
+            n.add(
+                "Link",
+                dh_locations + " oil cogeneration",
+                bus0= oil_cogeneration_buses_i, #dh_locations + " oil_cogeneration",
+                bus1=nodes,     # electricity (AC node)
+                bus2=heat_buses_dh,    # district heat
                 p_nom_extendable=True,
                 carrier="oil cogeneration",
-                marginal_cost=pyrolysis_data.loc[
-                    "oil cogeneration", "marginal cost"
-                ],
-                capital_cost=pyrolysis_data.loc[
-                    "oil cogeneration", "capital cost"
-                ],
-                efficiency=pyrolysis_data.loc[
-                    "oil cogeneration", "efficiency-elec"
-                ],  # to elec
-                efficiency2=pyrolysis_data.loc[
-                    "oil cogeneration", "efficiency-heat"
-                ],  # to heat
+                marginal_cost=pyrolysis_data.loc["oil cogeneration", "marginal cost"],
+                capital_cost=pyrolysis_data.loc["oil cogeneration", "capital cost"],
+                efficiency=pyrolysis_data.loc["oil cogeneration", "efficiency-elec"],
+                efficiency2=pyrolysis_data.loc["oil cogeneration", "efficiency-heat"],
             )
+             
 
         # ------------------------------------------------------------------
         # multi_path_syngas: from syngas store (adsorption, cogeneration, direct combustion)
         # ------------------------------------------------------------------
         adsorbtion_buses_i = n.add(
-            "Bus", buses_i + " adsorption", carrier="adsorption"
-        )
+            "Bus", buses_i + " adsorbtion", carrier="adsorbtion", unit="MWh_LHV syngas"
+            )
         syngas_cogeneration_buses_i = n.add(
-            "Bus", buses_i + " syngas_cogeneration", carrier="syngas cogeneration"
-        )
+            "Bus", buses_i + " syngas_cogeneration", carrier="syngas cogeneration", unit="MWh_LHV syngas"
+            )
         combu_direct_syngas_2_buses_i = n.add(
-            "Bus",
-            buses_i + " combu_direct_syngas_2",
-            carrier="direct combustion syngas 2",
-        )
-
-        n.add(
-            "Link",
-            syngas_store_buses_i + " mpath_syngas",
-            bus0=syngas_store_buses_i,  # syngas store
-            bus1=adsorbtion_buses_i,  # pressure swing adsorption process
-            bus2=syngas_cogeneration_buses_i,  # cogeneration from syngas
-            bus3=combu_direct_syngas_2_buses_i,  # direct combustion of syngas for heat
-            carrier="mpath syngas",
-            p_nom_extendable=True,
-            efficiency=pyrolysis_data.loc[
-                "mpath syngas", "efficiency-adso"
-            ],  # to PSA
-            efficiency2=pyrolysis_data.loc[
-                "mpath syngas", "efficiency-cogen"
-            ],  # to cogeneration
-            efficiency3=pyrolysis_data.loc[
-                "mpath syngas", "efficiency-combu"
-            ],  # to direct combustion (heat)
-        )
-
-        # Direct combustion of syngas2 for heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
-            n.add(
-                "Link",
-                dh_locations + " syngas2 direct combustion for heat",  ########new######
-                bus0=dh_locations + " combu_direct_syngas_2",  ########new######
-                bus1=heat_buses_dh,  ########new######
-                carrier="syngas2 direct combustion for heat",
-                p_nom_extendable=True,
-                marginal_cost=pyrolysis_data.loc[
-                    "direct combu syngas2", "marginal cost"
-                ],
-                capital_cost=pyrolysis_data.loc[
-                    "direct combu syngas2", "capital cost"
-                ],
-                efficiency=pyrolysis_data.loc[
-                    "direct combu syngas2", "efficiency"
-                ],  # combustion of syngas 2 to produce heat
+            "Bus",buses_i + " combu_direct_syngas_2", carrier="direct combustion syngas 2", unit="MWh_LHV syngas"
             )
 
-        # adsorption: syngas -> H2 + syngas_wo_h2
+
+        # CHOICE: syngas store -> (adsorption) OR (cogen) OR (direct combustion)
+        # Route 1: syngas_store -> adsorption 
+        n.add(
+            "Link",
+            buses_i + " syngas_store to adsorption",
+            bus0=syngas_store_buses_i,
+            bus1=adsorbtion_buses_i,
+            carrier="syngas_store to adsorbtion",
+            p_nom_extendable=True,
+            efficiency=1.0,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+        )
+         # adsorption: syngas -> H2 + syngas_wo_h2
         n.add(
             "Link",
             adsorbtion_buses_i,
@@ -4956,6 +4954,66 @@ def add_pyrolysis(
             ],  # left over syngas without h2 store
         )
 
+        # Route 2: syngas_store -> syngas_cogeneration fuel bus (optional)
+        n.add(
+            "Link",
+            buses_i + " syngas_store to syngas_cogen_bus",
+            bus0=syngas_store_buses_i,
+            bus1=syngas_cogeneration_buses_i,
+            carrier="syngas_store to syngas_cogen_bus",
+            p_nom_extendable=True,
+            efficiency=1.0,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+        )
+        
+        # syngas cogeneration (elec + heat, only where DH exists)
+        if len(dh_locations) > 0:  ########new######
+            n.add(
+                "Link",
+                dh_locations + " syngas cogen",  ########new######
+                bus0=syngas_cogeneration_buses_i,  ########new######
+                bus1=nodes,  #elec
+                bus2=heat_buses_dh,  #heat
+                carrier="syngas cogen",
+                p_nom_extendable=True,
+                marginal_cost=pyrolysis_data.loc["syngas cogen", "marginal cost"],
+                capital_cost=pyrolysis_data.loc["syngas cogen", "capital cost"],
+                efficiency=pyrolysis_data.loc["syngas cogen", "efficiency-elec"],
+                efficiency2=pyrolysis_data.loc["syngas cogen", "efficiency-heat"],
+                )
+
+
+        # Route 3: syngas_store -> direct combustion fuel bus (optional)
+        n.add(
+            "Link",
+            buses_i + " syngas_store to syngas_combu_bus",
+            bus0=syngas_store_buses_i,
+            bus1=combu_direct_syngas_2_buses_i,
+            carrier="syngas_store to syngas_combu_bus",
+            p_nom_extendable=True,
+            efficiency=1.0,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+        )
+
+
+        # Direct combustion of syngas2 for heat (only where DH exists)
+        if len(dh_locations) > 0:  ########new######
+            n.add(
+                "Link",
+                dh_locations + " syngas2 direct combustion for heat",  ########new######
+                bus0=combu_direct_syngas_2_buses_i,  ########new######
+                bus1=heat_buses_dh,  ########new######
+                carrier="syngas2 direct combustion for heat",
+                p_nom_extendable=True,
+                marginal_cost=pyrolysis_data.loc["direct combu syngas2", "marginal cost"],
+                capital_cost=pyrolysis_data.loc["direct combu syngas2", "capital cost"],
+                efficiency=pyrolysis_data.loc["direct combu syngas2", "efficiency"],  # combustion of syngas 2 to produce heat
+            )
+
+       
+
         # ------------------------------------------------------------------
         # syngas_wo_h2 path: cogen + direct heat
         # ------------------------------------------------------------------
@@ -4963,58 +5021,39 @@ def add_pyrolysis(
             "Bus",
             buses_i + " syngas_wo_h2_cogeneration",
             carrier="syngas wo h2 cogeneration",
-        )
+            unit="MWh_LHV syngas"
+            )
         combu_direct_syngas_wo_h2_buses_i = n.add(
             "Bus",
             buses_i + " combu_direct_syngas_wo_h2",
             carrier="direct combustion syngas wo h2",
-        )
-
-        # splitter: store -> cogeneration + direct heat
-        n.add(
-            "Link",
-            syngas_wo_h2_buses_i,
-            bus0=syngas_wo_h2_buses_i,  # syngas without h2 storage
-            bus1=syngas_wo_h2_cogeneration_buses_i,  # cogeneration
-            bus2=combu_direct_syngas_wo_h2_buses_i,  # combustion
-            carrier="syngas wo h2",
-            p_nom_extendable=True,
-            efficiency=pyrolysis_data.loc[
-                "syngas wo h2", "efficiency-cogen"
-            ],  # cogen eff
-            efficiency2=pyrolysis_data.loc[
-                "syngas wo h2", "efficiency-heat"
-            ],  # heat eff (transport to combu branch)
-        )
-
-        # direct combustion of syngas wo h2 for heat (only where DH exists)
-        if len(dh_locations) > 0:  ########new######
-            n.add(
-                "Link",
-                dh_locations + " syngas wo h2 direct combustion for heat",  ########new######
-                bus0=dh_locations + " combu_direct_syngas_wo_h2",  ########new######
-                bus1=heat_buses_dh,  ########new######
-                carrier="syngas wo h2 direct combustion for heat",
-                p_nom_extendable=True,
-                marginal_cost=pyrolysis_data.loc[
-                    "direct combu syngas woh2", "marginal cost"
-                ],
-                capital_cost=pyrolysis_data.loc[
-                    "direct combu syngas woh2", "capital cost"
-                ],
-                efficiency=pyrolysis_data.loc[
-                    "direct combu syngas woh2", "efficiency"
-                ],  # combustion of syngas without h2 to produce heat
+            unit="MWh_LHV syngas"
             )
 
+
+        # CHOICE: syngas_wo_h2 store -> (cogen) OR (direct combustion for heat)
+
+        # Route 1 (optional): syngas_wo_h2_store -> cogen fuel bus
+        n.add(
+            "Link",
+            buses_i + " syngas_wo_h2_store to cogen_bus",
+            bus0=syngas_wo_h2_buses_i,                 # this is your store bus
+            bus1=syngas_wo_h2_cogeneration_buses_i,    # fuel bus for CHP
+            carrier="syngas_wo_h2_store to cogen_bus",
+            p_nom_extendable=True,
+            efficiency=1.0,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+        )
+        
         # syngas_wo_h2 cogeneration (elec + heat, only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        if len(dh_locations) > 0: 
             n.add(
                 "Link",
-                dh_locations + " syngas_wo_h2 cogen",  ########new######
-                bus0=dh_locations + " syngas_wo_h2_cogeneration",  ########new######
-                bus1=dh_locations,  ########new######
-                bus2=heat_buses_dh,  ########new######
+                dh_locations + " syngas_wo_h2 cogen",  
+                bus0=syngas_wo_h2_cogeneration_buses_i,  
+                bus1=nodes,  #AC
+                bus2=heat_buses_dh,  #DH buses
                 carrier="syngas wo h2 cogen",
                 p_nom_extendable=True,
                 marginal_cost=pyrolysis_data.loc[
@@ -5031,29 +5070,43 @@ def add_pyrolysis(
                 ],  # heat eff
             )
 
-        # syngas cogeneration (elec + heat, only where DH exists)
-        if len(dh_locations) > 0:  ########new######
+        # Route 2 (optional): syngas_wo_h2_store -> direct combustion fuel bus
+        n.add(
+            "Link",
+            buses_i + " syngas_wo_h2_store to combu_bus",
+            bus0=syngas_wo_h2_buses_i,                 # same store bus
+            bus1=combu_direct_syngas_wo_h2_buses_i,    # fuel bus for boiler/combustion
+            carrier="syngas_wo_h2_store to combu_bus",
+            p_nom_extendable=True,
+            efficiency=1.0,
+            capital_cost=0.0,
+            marginal_cost=0.0,
+        )
+
+
+        # direct combustion of syngas wo h2 for heat (only where DH exists)
+        if len(dh_locations) > 0:  
             n.add(
                 "Link",
-                dh_locations + " syngas cogen",  ########new######
-                bus0=dh_locations + " syngas_cogeneration",  ########new######
-                bus1=dh_locations,  ########new######
-                bus2=heat_buses_dh,  ########new######
-                carrier="syngas cogen",
+                dh_locations + " syngas wo h2 direct combustion for heat",  
+                bus0=combu_direct_syngas_wo_h2_buses_i,  
+                bus1=heat_buses_dh,  ########new######
+                carrier="syngas wo h2 direct combustion for heat",
                 p_nom_extendable=True,
                 marginal_cost=pyrolysis_data.loc[
-                    "syngas cogen", "marginal cost"
+                    "direct combu syngas woh2", "marginal cost"
                 ],
                 capital_cost=pyrolysis_data.loc[
-                    "syngas cogen", "capital cost"
+                    "direct combu syngas woh2", "capital cost"
                 ],
                 efficiency=pyrolysis_data.loc[
-                    "syngas cogen", "efficiency-elec"
-                ],
-                efficiency2=pyrolysis_data.loc[
-                    "syngas cogen", "efficiency-heat"
-                ],
+                    "direct combu syngas woh2", "efficiency"
+                ],  # combustion of syngas without h2 to produce heat
             )
+
+
+
+
 
 
 def add_industry(
@@ -6808,14 +6861,6 @@ def add_import_options(
 if __name__ == "__main__":
     if "snakemake" not in globals():
         from scripts._helpers import mock_snakemake
-
-        # snakemake = mock_snakemake(
-        #     "prepare_sector_network",
-        #     opts="",
-        #     clusters="10",
-        #     sector_opts="",
-        #     planning_horizons="2050",
-        # )
         snakemake = mock_snakemake(
             "prepare_sector_network", ###changed for my networks for debugging
             opts="",
@@ -6823,12 +6868,13 @@ if __name__ == "__main__":
             ll="vopt",
             sector_opts="", 
             planning_horizons="2050", ###changed for my networks for debugging
+            configfile="config/config.debug.yaml",
         )
 
         #change
         #only for debugging!!! go to already have files for debugging
-        # debug_base = "/home/mdomenec/pypsa-eur-tx2/debugging"
-        # orig_root = "/home/mdomenec/pypsa-eur-tx2/resources"
+        debug_base = "/home/mdomenec/pypsa-eur-tx2new/debugging"
+        orig_root = "/home/mdomenec/pypsa-eur-tx2new/resources"
 
         for name, val in snakemake.input.items():
             # some entries may be unnamed (name is None); skip those
@@ -6846,11 +6892,14 @@ if __name__ == "__main__":
             setattr(snakemake.input, name, new_val)
         #change
 
+
     configure_logging(snakemake)  # pylint: disable=E0606
     set_scenario_config(snakemake)
     update_config_from_wildcards(snakemake.config, snakemake.wildcards)
 
     options = snakemake.params.sector
+
+
     cf_industry = snakemake.params.industry
 
     investment_year = int(snakemake.wildcards.planning_horizons)
@@ -7093,7 +7142,9 @@ if __name__ == "__main__":
 
     if options["allam_cycle_gas"]:
         add_allam_gas(n, costs, pop_layout=pop_layout, spatial=spatial)
-
+    config = snakemake.config #new
+    add_pyrolysis(n, spatial, options, pyrolysis_data, pop_layout) #new
+    
     n = set_temporal_aggregation(
         n, snakemake.params.time_resolution, snakemake.input.snapshot_weightings
     )
@@ -7126,8 +7177,7 @@ if __name__ == "__main__":
         nyears,
         limit,
     )
-    config = snakemake.config #new
-    add_pyrolysis(n, spatial, options, pyrolysis_data, pop_layout) #new
+
 
     maxext = snakemake.params["lines"]["max_extension"]
     if maxext is not None:
