@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+#
+# SPDX-License-Identifier: MIT
+
+# This file is used to define the scenarios that are run by snakemake. 
+#Each entry on the first level is a scenario. 
+#Each scenario can contain configuration overrides with 
+#respect to the config/config.yaml settings.
+#
+# Example
+# custom-scenario: # name of the scenario
+#   electricity:
+#       renewable_carriers: [wind, solar] # override the list of renewable carriers
+
+#tests with lower pyrolysis cost
+
+1_P_HB_L_400:
+  sector:
+    co2_sequestration_potential:
+      2050: 400 # Mt
+  biomass:
+    scenario: ENS_High
+
+2_P_HB_L_200:
+  sector:
+    co2_sequestration_potential:
+      2050: 200 # Mt
+  biomass:
+    scenario: ENS_High
+
+
+3_P_HB_L_155:
+  sector:
+    co2_sequestration_potential:
+      2050: 155 # Mt
+  biomass:
+    scenario: ENS_High
+
+4_P_MB_L_400:
+  sector:
+    co2_sequestration_potential:
+      2050: 400 # Mt
+  biomass:
+    scenario: ENS_Med
+
+5_P_MB_L_200:
+  sector:
+
+    co2_sequestration_potential:
+      2050: 200 # Mt
+  biomass:
+    scenario: ENS_Med
+
+6_P_MB_L_155:
+  sector:
+    co2_sequestration_potential:
+      2050: 155 # Mt
+  biomass:
+    scenario: ENS_Med
+
+
+
+
+# 1_P_HB_L_400_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 400 # Mt
+#   biomass:
+#     scenario: ENS_High
+
+# 2_P_HB_L_200_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 200 # Mt
+#   biomass:
+#     scenario: ENS_High
+
+
+# 3_P_HB_L_155_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 155 # Mt
+#   biomass:
+#     scenario: ENS_High
+
+# 4_P_MB_L_400_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 400 # Mt
+#   biomass:
+#     scenario: ENS_Med
+
+# 5_P_MB_L_200_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 200 # Mt
+#   biomass:
+#     scenario: ENS_Med
+
+# 6_P_MB_L_155_no_0:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 155 # Mt
+#   biomass:
+#     scenario: ENS_Med
+
+
+
+

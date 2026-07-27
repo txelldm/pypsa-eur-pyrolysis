@@ -823,11 +823,11 @@ sector:
   #   enable: true #true #false
   industry_biomass_demand: false #new
   pyrolysis_multi-output:
-    enable: true
+    enable: false
     include_stores: false
-  flash_pyrolysis: false
-  slow_pyrolysis_CHP: false
-  slow_pyrolysis_H2: false
+  flash_pyrolysis: true
+  slow_pyrolysis_CHP: true
+  slow_pyrolysis_H2: true
 
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#industry

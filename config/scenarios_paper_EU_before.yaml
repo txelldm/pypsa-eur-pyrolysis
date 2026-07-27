@@ -1,0 +1,278 @@
+# # # # -*- coding: utf-8 -*-
+# # # # SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+# # # #
+# # # # SPDX-License-Identifier: MIT
+
+# # # # This file is used to define the scenarios that are run by snakemake. 
+# # # #Each entry on the first level is a scenario. 
+# # # #Each scenario can contain configuration overrides with 
+# # # #respect to the config/config.yaml settings.
+# # # #
+# # # # Example
+# # #c #
+# # # # custom-scenario: # name of the scenario
+# # # #   electricity:
+# # # #       renewable_carriers: [wind, solar] # override the list of renewable carriers
+
+
+
+
+1_EU_NOpyro_HB_155_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+
+1_EU_pyro_HB_155_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+2_EU_NOpyro_HB_260_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+2_EU_pyro_HB_260_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+3_EU_NOpyro_HB_405_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 405 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+
+3_EU_pyro_HB_405_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 405  #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+  
+###############
+
+4_EU_NOpyro_MB_155_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+4_EU_pyro_MB_155_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2   
+    biogas_upgrading: true
+    biogas_upgrading_cc: true   
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+5_EU_NOpyro_MB_260:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+5_EU_pyro_MB_260:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+6_EU_NOpyro_MB_405_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 405 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 
+
+6_EU_pyro_MB_405_bg:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_spatial: true
+    co2_network: true
+    biomass_spatial: true #change to true
+    biomass_transport: true
+    co2_sequestration_potential:
+      2050: 405 #Mt
+    shipping_hydrogen_share:
+      2050: 0.3
+    shipping_methanol_share:
+      2050: 0.5
+    shipping_oil_share:
+      2050: 0.2
+    biogas_upgrading: true
+    biogas_upgrading_cc: true
+  biomass:
+    scenario: ENS_Med
+  electricity:
+    conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass, nuclear] #nuclear 

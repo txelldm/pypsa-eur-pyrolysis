@@ -129,7 +129,7 @@ electricity:
   custom_powerplants: false
   everywhere_powerplants: []
 
-  conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass]
+  conventional_carriers: [oil, OCGT, CCGT, coal, lignite, geothermal, biomass] #nuclear is out
   renewable_carriers: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, hydro]
 
   estimate_renewable_capacities:
@@ -648,7 +648,7 @@ sector:
     2035: 0
     2040: 0
     2045: 0
-    2050: 0
+    2050: 0.3
   shipping_methanol_share:
     2020: 0
     2025: 0
@@ -656,7 +656,7 @@ sector:
     2035: 0.35
     2040: 0.55
     2045: 0.8
-    2050: 1
+    2050: 0.5
   shipping_oil_share:
     2020: 1
     2025: 1
@@ -664,7 +664,7 @@ sector:
     2035: 0.65
     2040: 0.45
     2045: 0.2
-    2050: 0
+    2050: 0.2
   shipping_methanol_efficiency: 0.46
   shipping_oil_efficiency: 0.40
   aviation_demand_factor: 1.
@@ -712,7 +712,7 @@ sector:
     urban decentral: true
     rural: true
   marginal_cost_heat_vent: 1000 #0.02 si default  #this is the penalty for venting heat to the atmosphere
-  allam_cycle_gas: true
+  allam_cycle_gas: false
   hydrogen_fuel_cell: true
   hydrogen_turbine: true
   SMR: true
@@ -737,11 +737,11 @@ sector:
     2035: 100
     2040: 180
     2045: 250
-    2050: 280 #Mt
-  co2_sequestration_cost: 00
+    2050: 260 #Mt
+  co2_sequestration_cost: 10 #€/t CO2
   co2_sequestration_lifetime: 50
-  co2_spatial: false
-  co2_network: false
+  co2_spatial: true
+  co2_network: true
   co2_network_cost_factor: 1
   cc_fraction: 0.9
   hydrogen_underground_storage: true
@@ -799,10 +799,10 @@ sector:
   gas_network_connectivity_upgrade: 1
   gas_distribution_grid: true
   gas_distribution_grid_cost_factor: 1.0
-  biomass_spatial: false #change to true
-  biomass_transport: false
-  biogas_upgrading: false
-  biogas_upgrading_cc: false
+  biomass_spatial: true #change to true
+  biomass_transport: true
+  biogas_upgrading: true
+  biogas_upgrading_cc: true
   conventional_generation:
     OCGT: gas
     CCGT: gas
@@ -849,7 +849,8 @@ sector:
       methanol: 121
       gas: 122
       oil: 125 
-  pyrolysis_multi-output:
+  industry_biomass_demand: false #new deactivate the fix load for industry biomass load
+  pyrolysis_multi-output: #new
     enable: false
     include_stores: false
   flash_pyrolysis: false
@@ -966,7 +967,7 @@ costs:
   overwrites: {}
   emission_prices:
     enable: false
-    co2: 0.
+    co2: 0 #€/t CO2
     co2_monthly_prices: false
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#clustering
@@ -1159,7 +1160,7 @@ solving:
     clip_p_max_pu: 1.e-2
     load_shedding: false
     curtailment_mode: false
-    noisy_costs: true
+    noisy_costs: true 
     skip_iterations: true
     rolling_horizon: false
     seed: 123
@@ -1206,6 +1207,15 @@ solving:
     options: gurobi-default
 
   solver_options:
+    gurobi-paper:
+      threads: 32 #cpu units (the more the better)
+      method: 2 # barrier
+      crossover: 0
+      BarConvTol: 1.e-6
+      Seed: 123
+      AggFill: 0
+      PreDual: 0
+      GURO_PAR_BARDENSETHRESH: 200
     gurobi-exploration:        #my config for fast scenarios #new 
       threads: 16
       method: 2         # barrier

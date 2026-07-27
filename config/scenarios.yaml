@@ -1,78 +1,109 @@
-# # -*- coding: utf-8 -*-
-# # SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
-# #
-# # SPDX-License-Identifier: MIT
+# # # # -*- coding: utf-8 -*-
+# # # # SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+# # # #
+# # # # SPDX-License-Identifier: MIT
 
-# # This file is used to define the scenarios that are run by snakemake. 
-# #Each entry on the first level is a scenario. 
-# #Each scenario can contain configuration overrides with 
-# #respect to the config/config.yaml settings.
-# #
-# # Example
-# #
-# # custom-scenario: # name of the scenario
-# #   electricity:
-# #       renewable_carriers: [wind, solar] # override the list of renewable carriers
+# # # # This file is used to define the scenarios that are run by snakemake. 
+# # # #Each entry on the first level is a scenario. 
+# # # #Each scenario can contain configuration overrides with 
+# # # #respect to the config/config.yaml settings.
+# # # #
+# # # # Example
+# # #c #
+# # # # custom-scenario: # name of the scenario
+# # # #   electricity:
+# # # #       renewable_carriers: [wind, solar] # override the list of renewable carriers
 
 
-EU_pyro:
+
+
+1_EU_NOpyro_HB_155_3:
   sector:
     pyrolysis_multi-output:
-      enable: true
-EU_NOpyro:
+      enable: false
+    co2_sequestration_potential:
+      2050: 155 #Mt
+
+
+# 1_EU_pyro_HB_155_3:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 155 #Mt
+
+2_EU_NOpyro_HB_260_3:
   sector:
     pyrolysis_multi-output:
       enable: false
 
+# 2_EU_pyro_HB_260_3:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
 
-EU_pyro_gas:
-  sector:
-    pyrolysis_multi-output:
-      enable: true
-    gas_network: true
-
-EU_NOpyro_gas:
-  sector:
-    pyrolysis_multi-output:
-      enable: false
-    gas_network: true
-
-EU_pyro_H2:
-  sector:
-    pyrolysis_multi-output:
-      enable: true
-    H2_network: true
-
-EU_NOpyro_H2:
+3_EU_NOpyro_HB_405_3:
   sector:
     pyrolysis_multi-output:
       enable: false
-    H2_network: true
+    co2_sequestration_potential:
+      2050: 405 #Mt
 
-EU_pyro_CO2:
-  sector:
-    pyrolysis_multi-output:
-      enable: true
-    co2_spatial: true
-    co2_network: true
+# 3_EU_pyro_HB_405_3:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 405  #Mt
 
-EU_NOpyro_CO2:
+###############
+
+4_EU_NOpyro_MB_155_3:
   sector:
     pyrolysis_multi-output:
       enable: false
-    co2_spatial: true
-    co2_network: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+  biomass:
+    scenario: ENS_Med
 
-EU_pyro_Bm_spatial:
+# 4_EU_pyro_MB_155_3:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 155 #Mt
+#   biomass:
+#     scenario: ENS_Med
+
+5_EU_NOpyro_MB_260_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+  biomass:
+    scenario: ENS_Med
+
+5_EU_pyro_MB_260_3:
   sector:
     pyrolysis_multi-output:
       enable: true
-    biomass_spatial: true #change to true
+  biomass:
+    scenario: ENS_Med
 
-
-EU_pyro_Bm_spatial_transport:
+6_EU_NOpyro_MB_405_3:
   sector:
     pyrolysis_multi-output:
-      enable: true
-    biomass_spatial: true #change to true
-    biomass_transport: true
+      enable: false
+    co2_sequestration_potential:
+      2050: 405 #Mt
+  biomass:
+    scenario: ENS_Med
+
+# 6_EU_pyro_MB_405_3:
+#   sector:
+#     pyrolysis_multi-output:
+#       enable: true
+#     co2_sequestration_potential:
+#       2050: 405 #Mt
+#   biomass:
+#     scenario: ENS_Med

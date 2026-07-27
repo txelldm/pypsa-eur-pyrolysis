@@ -760,8 +760,8 @@ def add_co2_tracking(
     n.add(
         "Store",
         "co2 atmosphere",
-        e_nom=np.inf,
-        e_min_pu=-1,
+        e_nom=np.inf,  #co2 atmosphere can take any value (from positive to negative, it is not limited)
+        e_min_pu=-1, #to allow get negative emissions. If not it will be limited
         carrier="co2",
         bus="co2 atmosphere",
         marginal_cost=-co2_price,
@@ -5203,65 +5203,130 @@ def add_industry(
     # 1e6 to convert TWh to MWh
     industrial_demand = pd.read_csv(industrial_demand_file, index_col=0) * 1e6 * nyears
 
-    n.add(
-        "Bus",
-        spatial.biomass.industry,
-        location=spatial.biomass.locations,
-        carrier="solid biomass for industry",
-        unit="MWh_LHV",
-    )
+########biomass industry
 
-    if options.get("biomass_spatial", options["biomass_transport"]):
-        p_set = (
-            industrial_demand.loc[spatial.biomass.locations, "solid biomass"].rename(
-                index=lambda x: x + " solid biomass for industry"
-            )
-            / nhours
+
+    # n.add(
+    #     "Bus",
+    #     spatial.biomass.industry,
+    #     location=spatial.biomass.locations,
+    #     carrier="solid biomass for industry",
+    #     unit="MWh_LHV",
+    # )
+
+    # if options.get("biomass_spatial", options["biomass_transport"]):
+    #     p_set = (
+    #         industrial_demand.loc[spatial.biomass.locations, "solid biomass"].rename(
+    #             index=lambda x: x + " solid biomass for industry"
+    #         )
+    #         / nhours
+    #     )
+    # else:
+    #     p_set = industrial_demand["solid biomass"].sum() / nhours
+
+    # n.add(
+    #     "Load",
+    #     spatial.biomass.industry,
+    #     bus=spatial.biomass.industry,
+    #     carrier="solid biomass for industry",
+    #     p_set=p_set,
+    # )
+
+    # n.add(
+    #     "Link",
+    #     spatial.biomass.industry,
+    #     bus0=spatial.biomass.nodes,
+    #     bus1=spatial.biomass.industry,
+    #     carrier="solid biomass for industry",
+    #     p_nom_extendable=True,
+    #     efficiency=1.0,
+    # )
+
+    # if len(spatial.biomass.industry_cc) <= 1 and len(spatial.co2.nodes) > 1:
+    #     link_names = nodes + " " + spatial.biomass.industry_cc
+    # else:
+    #     link_names = spatial.biomass.industry_cc
+
+    # n.add(
+    #     "Link",
+    #     link_names,
+    #     bus0=spatial.biomass.nodes,
+    #     bus1=spatial.biomass.industry,
+    #     bus2="co2 atmosphere",
+    #     bus3=spatial.co2.nodes,
+    #     carrier="solid biomass for industry CC",
+    #     p_nom_extendable=True,
+    #     capital_cost=costs.at["cement capture", "capital_cost"]
+    #     * costs.at["solid biomass", "CO2 intensity"],
+    #     efficiency=0.9,  # TODO: make config option
+    #     efficiency2=-costs.at["solid biomass", "CO2 intensity"]
+    #     * costs.at["cement capture", "capture_rate"],
+    #     efficiency3=costs.at["solid biomass", "CO2 intensity"]
+    #     * costs.at["cement capture", "capture_rate"],
+    #     lifetime=costs.at["cement capture", "lifetime"],
+    # )
+
+    if options.get("industry_biomass_demand", True):
+        n.add(
+            "Bus",
+            spatial.biomass.industry,
+            location=spatial.biomass.locations,
+            carrier="solid biomass for industry",
+            unit="MWh_LHV",
         )
-    else:
-        p_set = industrial_demand["solid biomass"].sum() / nhours
 
-    n.add(
-        "Load",
-        spatial.biomass.industry,
-        bus=spatial.biomass.industry,
-        carrier="solid biomass for industry",
-        p_set=p_set,
-    )
+        if options.get("biomass_spatial", options["biomass_transport"]):
+            p_set = (
+                industrial_demand.loc[spatial.biomass.locations, "solid biomass"].rename(
+                    index=lambda x: x + " solid biomass for industry"
+                )
+                / nhours
+            )
+        else:
+            p_set = industrial_demand["solid biomass"].sum() / nhours
 
-    n.add(
-        "Link",
-        spatial.biomass.industry,
-        bus0=spatial.biomass.nodes,
-        bus1=spatial.biomass.industry,
-        carrier="solid biomass for industry",
-        p_nom_extendable=True,
-        efficiency=1.0,
-    )
+        n.add(
+            "Load",
+            spatial.biomass.industry,
+            bus=spatial.biomass.industry,
+            carrier="solid biomass for industry",
+            p_set=p_set,
+        )
 
-    if len(spatial.biomass.industry_cc) <= 1 and len(spatial.co2.nodes) > 1:
-        link_names = nodes + " " + spatial.biomass.industry_cc
-    else:
-        link_names = spatial.biomass.industry_cc
+        n.add(
+            "Link",
+            spatial.biomass.industry,
+            bus0=spatial.biomass.nodes,
+            bus1=spatial.biomass.industry,
+            carrier="solid biomass for industry",
+            p_nom_extendable=True,
+            efficiency=1.0,
+        )
 
-    n.add(
-        "Link",
-        link_names,
-        bus0=spatial.biomass.nodes,
-        bus1=spatial.biomass.industry,
-        bus2="co2 atmosphere",
-        bus3=spatial.co2.nodes,
-        carrier="solid biomass for industry CC",
-        p_nom_extendable=True,
-        capital_cost=costs.at["cement capture", "capital_cost"]
-        * costs.at["solid biomass", "CO2 intensity"],
-        efficiency=0.9,  # TODO: make config option
-        efficiency2=-costs.at["solid biomass", "CO2 intensity"]
-        * costs.at["cement capture", "capture_rate"],
-        efficiency3=costs.at["solid biomass", "CO2 intensity"]
-        * costs.at["cement capture", "capture_rate"],
-        lifetime=costs.at["cement capture", "lifetime"],
-    )
+        if len(spatial.biomass.industry_cc) <= 1 and len(spatial.co2.nodes) > 1:
+            link_names = nodes + " " + spatial.biomass.industry_cc
+        else:
+            link_names = spatial.biomass.industry_cc
+
+        n.add(
+            "Link",
+            link_names,
+            bus0=spatial.biomass.nodes,
+            bus1=spatial.biomass.industry,
+            bus2="co2 atmosphere",
+            bus3=spatial.co2.nodes,
+            carrier="solid biomass for industry CC",
+            p_nom_extendable=True,
+            capital_cost=costs.at["cement capture", "capital_cost"]
+            * costs.at["solid biomass", "CO2 intensity"],
+            efficiency=0.9,
+            efficiency2=-costs.at["solid biomass", "CO2 intensity"]
+            * costs.at["cement capture", "capture_rate"],
+            efficiency3=costs.at["solid biomass", "CO2 intensity"]
+            * costs.at["cement capture", "capture_rate"],
+            lifetime=costs.at["cement capture", "lifetime"],
+        )
+
 
     n.add(
         "Bus",
