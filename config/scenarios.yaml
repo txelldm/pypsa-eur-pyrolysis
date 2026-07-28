@@ -1,0 +1,96 @@
+# # # # -*- coding: utf-8 -*-
+# # # # SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+# # # #
+# # # # SPDX-License-Identifier: MIT
+
+
+1_EU_NOpyro_HB_155_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_sequestration_potential:
+      2050: 155 #Mt
+
+
+1_EU_pyro_HB_155_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+
+2_EU_NOpyro_HB_260_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+
+2_EU_pyro_HB_260_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+
+3_EU_NOpyro_HB_405_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_sequestration_potential:
+      2050: 405 #Mt
+
+3_EU_pyro_HB_405_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_sequestration_potential:
+      2050: 405  #Mt
+
+##############
+
+4_EU_NOpyro_MB_155_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_sequestration_potential:
+      2050: 155 #Mt
+  biomass:
+    scenario: ENS_Med
+
+4_EU_pyro_MB_155_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_sequestration_potential:
+      2050: 155 #Mt
+  biomass:
+    scenario: ENS_Med
+
+5_EU_NOpyro_MB_260_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+  biomass:
+    scenario: ENS_Med
+
+5_EU_pyro_MB_260_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+  biomass:
+    scenario: ENS_Med
+
+6_EU_NOpyro_MB_405_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: false
+    co2_sequestration_potential:
+      2050: 405 #Mt
+  biomass:
+    scenario: ENS_Med
+
+6_EU_pyro_MB_405_3:
+  sector:
+    pyrolysis_multi-output:
+      enable: true
+    co2_sequestration_potential:
+      2050: 405 #Mt
+  biomass:
+    scenario: ENS_Med
