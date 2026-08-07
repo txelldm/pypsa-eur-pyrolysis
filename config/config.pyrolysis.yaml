@@ -853,9 +853,6 @@ sector:
   pyrolysis_multi-output: #new
     enable: false
     include_stores: false
-  flash_pyrolysis: false
-  slow_pyrolysis_CHP: false
-  slow_pyrolysis_H2: false
 
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#industry
